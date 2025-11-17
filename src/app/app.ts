@@ -19,7 +19,7 @@ export class App implements OnInit
 
   lg = "fr";
   globalsearch = "";
-  menuClicked = "workshop";
+  menuClicked = "home";
 
   montreClicked:any;
   data:any;
@@ -107,6 +107,7 @@ export class App implements OnInit
 
   clickMobileMenu(){
     this.mobilemenuvisible=!this.mobilemenuvisible;
+    if(this.mobile)return;
     if (!this.mobilemenuvisible) {
       this.renderer.setStyle(document.body, 'overflow-y', 'auto');
       this.renderer.setStyle(document.body, 'padding-right', '0px');

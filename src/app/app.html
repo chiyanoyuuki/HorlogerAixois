@@ -23,7 +23,7 @@
     </div>
   </div>
 
-  <button (click)="updateData()" style="position: fixed;left:20px;top:50px;z-index: 1000;">Save Data</button>
+  <button (click)="updateData()" *ngIf="false" style="position: fixed;left:20px;top:50px;z-index: 1000;">Save Data</button>
 
   <div class="page home" *ngIf="menuClicked=='home'" [class.showContent]="showContent">
     <video id="video" class="video" loop autoplay [muted]="'muted'">
@@ -35,6 +35,7 @@
     </div>
 
     <app-lastarrival 
+      [mobile]="mobile"
       [montres]="montres" 
       [lg]="lg" 
       [data]="data"
@@ -65,6 +66,7 @@
     </div>
 
     <app-lastarrival 
+      [mobile]="mobile"
       [montres]="montres"
       [tri]="'arrivee'"
       [filter]="'movement'"
@@ -146,6 +148,7 @@
 
   <div class="page watches" *ngIf="menuClicked=='watches'" [class.showContent]="showContent">
     <app-lastarrival 
+      [mobile]="mobile"
       [montres]="montres" 
       [lg]="lg" 
       [tri]="'arrivee'"
@@ -155,6 +158,7 @@
     </app-lastarrival>
 
     <app-lastarrival 
+      [mobile]="mobile"
       [montres]="montres" 
       [lg]="lg" 
       [tri]="'arrivee'"
@@ -198,6 +202,7 @@
     </div>
 
     <app-lastarrival 
+      [mobile]="mobile"
       [montres]="montres" 
       [lg]="lg" 
       [data]="data"

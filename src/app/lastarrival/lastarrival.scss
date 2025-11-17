@@ -170,3 +170,21 @@
         }
     }
 }
+
+.mobile{
+    .lastarrival{
+        .content{
+            .montres{
+                .montre{
+                    width:40%!important;
+                    img{
+                        width: 100%;
+                        height: 25vh;
+                        object-fit: contain;
+                    }
+                }
+            }
+        }
+    }
+}
+

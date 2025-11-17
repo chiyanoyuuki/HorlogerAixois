@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './lastarrival.scss',
 })
 export class Lastarrival implements OnInit{
+  @Input() mobile:any = false;
   @Input() montres:any;
   @Input() lg:any;
   @Input() data:any;
