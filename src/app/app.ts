@@ -15,6 +15,8 @@ import { Movementscomplic } from './movementscomplic/movementscomplic';
 })
 export class App implements OnInit 
 {
+  link = "http"+(isDevMode()?'':'s')+"://chiyanh.cluster031.hosting.ovh.net/";
+
   lg = "fr";
   globalsearch = "";
   menuClicked = "workshop";
@@ -156,9 +158,7 @@ export class App implements OnInit
     this.data = await res.json();
 
     this.http
-      .post<void>('http' +
-          (isDevMode() ? '' : 's') +
-          '://chiyanh.cluster031.hosting.ovh.net/sethorlogeraixois', this.data, {
+      .post<void>(this.link+'sethorlogeraixois', this.data, {
         headers: { 'Content-Type': 'application/json' }
       }).subscribe((data:any)=>{
         this.getData();
@@ -166,7 +166,7 @@ export class App implements OnInit
   }
 
   getData(){
-    this.http.get<any>('http://chiyanh.cluster031.hosting.ovh.net/gethorlogeraixois').subscribe((data:any)=>{
+    this.http.get<any>(this.link + 'gethorlogeraixois').subscribe((data:any)=>{
       this.data = data;
       console.log(this.data);
     });
