@@ -1,1 +1,593 @@
-/* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: menus;
+  src: url(../public/menus.otf) format("openType");
+}
+
+:root {
+  --orange: rgb(255, 217, 176);
+  --lightorange: rgba(202, 193, 184,0.3);
+  --darkorange: rgb(148, 114, 81);
+}
+
+*{
+    position: relative;
+    margin:0;
+    transition: 0.5s;
+    scrollbar-color: var(--darkorange) var(--orange);
+    scrollbar-width: thin;
+}
+
+body{
+    overflow-x:hidden;
+    transition: 0s;
+}
+
+select{
+    border: unset;
+    background-color: var(--orange);
+    text-align: center;
+    padding: 3px;
+    margin: auto;
+    border:1px solid var(--darkorange);
+}
+
+button{
+    border: unset;
+    background-color: var(--orange);
+    text-align: center;
+    padding: 3px;
+    margin: auto;
+    border:1px solid var(--darkorange);
+    font-weight: bold;
+}
+button:hover{
+    cursor:pointer;
+    opacity:0.6;
+}
+
+.line{
+    height:1px;
+    width:90%;
+    margin:auto;
+    margin-top:1vh;
+    margin-bottom:1vh;
+    display:flex;
+    border-bottom:1px solid var(--lightorange);
+}
+
+.clickable:hover{
+    cursor:pointer;
+    opacity:0.5;
+    scale:1.1;
+}
+
+.mobilemenu{
+    padding:2vh 2vw;
+    transition:1s;
+    position: fixed;
+    left: 100vw;
+    top: 49px;
+    z-index: 1;
+    background-color: white;
+    width: 100%;
+    opacity:0;
+    height:100%;
+    p{
+        font-size:20px;
+        font-weight:bold;
+        margin: 0vh 1vw;
+        font-family: "menus";
+        text-align: center;
+    }
+}
+
+.mobilemenu.visible{
+    left: 0vw;
+    opacity:1;
+}
+
+.bloc{
+    padding:5vh 5vw;
+}
+
+.graybloc{
+    background-color:var(--lightorange);
+}
+
+.header{
+    position:sticky;
+    top: -80px;
+    z-index: 10;
+    padding-top:1vh;
+    background-color: var(--orange);
+    height:121px;
+    .icons{
+        position: fixed;
+        top:5px;
+        width: 90vw;
+        margin: 1vh 0vw;
+        margin-left:5vw;
+        display: flex;
+        justify-content: space-between;
+        .menu{
+            width:25px;
+            position: absolute;
+            opacity:0;
+            pointer-events: none;
+            left:50px;
+            top:-2px;
+        }
+        .drapeau{
+            width: 30px;
+            left:0px;
+            filter: drop-shadow(1px 1px 3px black);
+        }
+        .loupe{
+            top:1px;
+            width: 20px;
+            filter: drop-shadow(1px 1px 3px black);
+        }
+        .globalsearch{
+            position: absolute;
+            right: 40px;
+            border-radius: 10px;
+            text-align: center;
+            top: 1px;
+            width: 0px;
+            opacity:0;
+            background-color:var(--lightorange);
+            color:black;
+            outline: none;
+            border:1px solid var(--darkorange);
+        }
+        .visible{
+            width:10%;
+            opacity:1;
+        }
+    }
+    .logo{
+        width: fit-content;
+        margin: auto;
+        top:0px;
+        margin-bottom: 20px;
+        img{
+            height: 56px;
+        }
+        p{
+            font-family: "menus";
+        }
+        p:nth-child(1){
+            font-weight:bold;
+            font-size:30px;
+        }
+        p:nth-child(2){
+            font-weight:bold;
+            font-size:20px;
+            top: -18px;
+            left: 50px;
+        }
+    }
+    .menus{
+        display: flex;
+        margin: auto;
+        width:fit-content;
+        padding-bottom:1vh;
+        pointer-events: unset;
+        p{
+            font-size:25px;
+            font-weight:bold;
+            margin: 0vh 1vw;
+            font-family: "menus";
+        }
+        .clicked{
+            opacity: 0.5;
+        }
+    }
+}
+
+.page{
+    opacity:0;
+}
+.showContent{
+    opacity:1;
+}
+
+.home{
+    video{
+        display: block;
+        width: 100%;
+    }
+    .bloctexte{
+            padding: 5vh 10vw;
+        p{
+            text-align: center;
+        }
+    }
+    .doubleblocs{
+        padding: 5vh 10%;
+        display:flex;
+        .bloc{
+            width:50%;
+            p:nth-child(1){
+                text-align: center;
+                margin-bottom:2vh;
+                font-weight:bold;
+            }
+            p:nth-child(2){
+                text-align: justify;
+                padding:0vh 5vw 2vh 5vw;
+            }
+            .carousel {
+                overflow: hidden;
+                margin: auto;
+                margin-left: 1vw;
+                margin-right: 1vw;
+                filter: drop-shadow(1px 1px 8px black);
+                .carousel-inner {
+                    display: flex;
+                    transition: transform 1s ease;
+                    img {
+                        width: 100%;
+                        flex-shrink: 0;
+                        height: 20vh;
+                        object-fit: cover;
+                        margin: auto;
+                    }
+                }
+            }      
+        }
+    }
+}
+
+.shop{
+    .bloctexte{
+        padding: 5vh 10vw;
+        p{
+            text-align: center;
+        }
+    }
+    video{
+        display: block;
+        width: 100%;
+    }
+    .images{
+        display: flex;
+        flex-flow: wrap;
+        width:100%;
+        img{
+            object-fit: cover;
+        }
+        img:nth-child(4n){
+            width:30%;
+        }
+        img:nth-child(4n + 1){
+            width:60%;
+        }
+        img:nth-child(4n + 2){
+            width:40%;
+        }
+        img:nth-child(4n + 3){
+            width:70%;
+        }
+    }
+}
+
+.workshop{
+    .title{
+        font-weight:bold;
+        padding-top:2vh;
+        padding-bottom:3vh;
+        text-align: center;
+        font-size:30px;
+        font-family: "menus";
+    }
+    .bloctexte{
+        padding: 5vh 10vw;
+        p{
+            text-align: center;
+        }
+    }
+    img{
+        display: block;
+        width: 100%;
+    }
+    .outils{
+        display:flex;
+        justify-content: space-between;
+        width:90vw;
+        padding:2vh 5vw;
+        .outil{
+            width:24%;
+            img{
+                height:200px;
+                object-fit: cover;
+            }
+            p{
+                padding:1vh 1vw;
+            }
+        }
+    }
+}
+
+.watches{
+    .title{
+        font-weight:bold;
+        padding-top:2vh;
+        padding-bottom:3vh;
+        text-align: center;
+        font-size:30px;
+        font-family: "menus";
+    }
+}
+
+.horology{
+    .title{
+        font-weight:bold;
+        padding-top:2vh;
+        padding-bottom:3vh;
+        text-align: center;
+        font-size:30px;
+        font-family: "menus";
+    }
+    
+    .content{
+        display:flex;
+        justify-content: space-between;
+        width:80%;
+        left:10%;
+        img{
+            width:30%;
+            object-fit: cover;
+        }
+    }
+}
+
+.watch{
+    .toptitle{
+        display:flex;
+        justify-content: center;
+        padding:5vh 0vw;
+        p:nth-child(1), p:nth-child(2){
+            font-weight:bold;
+            text-align: center;
+            font-size:30px;
+            font-family: "menus";
+        }
+        p:nth-child(2){
+            margin:0vh 1vw;
+        }
+        p:nth-child(3){
+            height:fit-content;
+            bottom:0px;
+            font-style: italic;
+            opacity:0.5;
+            top:1vh;
+        }
+    }
+    .title{
+        font-weight:bold;
+        padding-top:2vh;
+        padding-bottom:3vh;
+        text-align: center;
+        font-size:30px;
+        font-family: "menus";
+    }
+    .topinfos{
+        display:flex;
+        padding:5vh 10vw;
+        .left{
+            width:60%;
+            .bigpicture{
+                margin-bottom:3vh;
+                height:50vh;
+                overflow: hidden;
+                img{
+                    position: absolute;
+                    width:100%;
+                    object-fit: contain;
+                    height:50vh;
+                }
+            }
+            .smallpictures{
+                display:flex;
+                justify-content: center;
+                img{
+                    width:50px;
+                    height:50px;
+                    object-fit: contain;
+                }
+                p{
+                    font-size:40px;
+                    margin: 0vh 3vw;
+                    font-family: "menus";
+                }
+            }
+        }
+        .right{
+            min-height:100%;
+            .info{
+                height: calc(100% / 8);
+                display:flex;
+                p{
+                    height:fit-content;
+                    margin: auto;
+                }
+                p:nth-child(1){
+                    font-size:25px;
+                    font-weight:bold;
+                    font-family: "menus";
+                    text-align: center;
+                    width:200px;
+                    margin-left:0vw;
+                    text-align: left;
+                }
+                p:nth-child(2){
+                    font-size: 20px;
+                    top:-2px;
+                    white-space: nowrap;
+                }
+            }
+        }
+    }
+    .bottominfos{
+        display: flex;
+        flex-flow: wrap;
+        margin-top:5vh;
+        padding:0vh 5vw 5vh 5vw; 
+        .info{
+            width:calc(100% / 6);
+            margin-top:5vh;
+            p:nth-child(1){
+                font-size:20px;
+                font-weight:bold;
+                font-family: "menus";
+                text-align: center;
+                width:200px;
+                margin-left:0vw;
+                text-align: left;
+            }
+            p:nth-child(2){
+                font-size: 20px;
+                top:-2px;
+            }
+        }
+    }
+}
+
+.legal{
+    padding:5vh 5vw;
+    h1{
+        text-align: center;
+    }
+    .muted{
+        text-align: center;
+        font-style: italic;
+        opacity:0.5;
+    }
+    .section{
+        margin-top:3vh;
+        h2{
+            margin-bottom:2vh;
+        }
+        p{
+            margin-left:2vw;
+        }
+    }
+}
+
+.footer{
+    background-color: var(--orange);
+    padding:2vh 2vw;
+    margin-top:2vh;
+    .mentionsconf{
+        display:flex;
+        justify-content: center;
+        p{
+            width:fit-content;
+            opacity:0.7;
+            font-size: 16px;
+        }
+    }
+    .rightsreserved{
+        opacity:0.7;
+        text-align: center;
+        font-size: 10px;
+    }
+}
+.portrait{
+    .header{
+        .icons{
+            .visible{
+                width:20%;
+            }
+        }
+    }
+    .watch{
+        .toptitle{
+            display:block;  
+            margin-bottom: 0vh;
+            p:nth-child(3){
+                text-align: center;
+            }
+        }
+        .topinfos{
+            display:block;
+            .left{
+                margin: auto;
+            }
+            .right{
+                margin-top:4vh;
+                .info{
+                    width:70vw;
+                    height:4vh;
+                    margin: auto;
+                    p{
+                        white-space: nowrap;
+                    }
+                    p:nth-child(1){
+                        font-size: 20px;
+                    }
+                    p:nth-child(2){
+                        font-size: 20px;
+                        text-align: right;
+                        margin-right:0;
+                    }
+                }
+            }
+        }
+        .bottominfos{
+            .info{
+                width:calc(100% / 2);
+                p{
+                    text-align: center;
+                    width:100%;
+                }
+            }
+        }
+    }
+}
+.portrait.scrolled{
+    .header{
+        .logo{
+            top:62px;
+        }
+        .menus{
+            opacity:0;
+            pointer-events: none;
+        }
+        .icons{
+            .menu{
+                opacity:1;
+                pointer-events: unset;
+            }
+        }
+    }
+}
+.mobile{
+    .header{
+        .icons{
+            .visible{
+                width:15%;
+            }
+        }
+    }
+}
+.mobile:not(.scrolled){
+    .header{
+        height:40px;
+        .logo{
+            top:-18px;
+        }
+        .menus{
+            opacity:0;
+            pointer-events: none;
+            top:-200px;
+        }
+        .icons{
+            .menu{
+                opacity:1;
+                pointer-events: unset;
+            }
+        }
+    }
+}

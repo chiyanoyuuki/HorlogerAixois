@@ -1,0 +1,29 @@
+<div class="movements graybloc">
+    <p class="title">{{data[lg].horology_movements | uppercase}}</p>
+    <div class="types">
+    <div *ngFor="let menu of data.horology.movements" class="type">
+        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
+        <img src="./horology/movements/{{menu.img}}"/>
+    </div>
+    </div>
+</div>
+
+<div class="complic">
+    <p class="title">{{data[lg].complications | uppercase}}</p>
+    <div class="types">
+    <div *ngFor="let menu of data.horology.complications" class="type">
+        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
+        <img src="./horology/complications/{{menu.img}}"/>
+    </div>
+    </div>
+</div>
+
+<div class="complic graybloc" *ngIf="polish">
+    <p class="title">{{data[lg].polishing | uppercase}}</p>
+    <div class="types">
+    <div *ngFor="let menu of data.workshop.polissage" class="type">
+        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
+        <img src="./workshop/polissage/{{menu.img}}"/>
+    </div>
+    </div>
+</div>

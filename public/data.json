@@ -1,0 +1,215 @@
+{
+  "ordre": [
+    { "id": "marque", "fr": "Marque", "en": "Brand", "type": "text" },
+    { "id": "modele", "fr": "Modèle", "en": "Model", "type": "text" },
+    { "id": "annee", "fr": "Année", "en": "Year", "type": "date" },
+    { "id": "movement", "fr": "Mouvement", "en": "Movement", "type": "text" },
+    { "id": "calibre", "fr": "Calibre", "en": "Caliber", "type": "number" },
+    {
+      "id": "reserve_de_marche",
+      "fr": "Réserve de marche",
+      "en": "Power reserve",
+      "type": "number"
+    },
+    { "id": "alternance_heure", "fr": "Alternance/heure", "en": "VPH", "type": "number" },
+    { "id": "etancheite", "fr": "Étanchéité", "en": "Water resistance", "type": "number" },
+    { "id": "boitier", "fr": "Boîtier", "en": "Case", "type": "text" },
+    { "id": "fond", "fr": "Fond", "en": "Caseback", "type": "text" },
+    { "id": "glace", "fr": "Glace", "en": "Crystal", "type": "text" },
+    { "id": "cadran", "fr": "Cadran", "en": "Dial", "type": "text" },
+    { "id": "entre_corne", "fr": "Entre-corne", "en": "Lug width", "type": "number" },
+    { "id": "boucle", "fr": "Boucle", "en": "Clasp", "type": "text" },
+    { "id": "taille", "fr": "Taille", "en": "Size", "type": "text" },
+    { "id": "couronne", "fr": "Couronne", "en": "Crown", "type": "text" },
+    { "id": "lunette", "fr": "Lunette", "en": "Bezel", "type": "text" },
+    { "id": "index", "fr": "Index", "en": "Indices", "type": "text" },
+    {
+      "id": "tour_poignet",
+      "fr": "Tour de poignet",
+      "en": "Wrist circumference",
+      "type": "number"
+    },
+    { "id": "largeur_boucle", "fr": "Largeur de boucle", "en": "Clasp width", "type": "number" },
+    { "id": "arrivee", "fr": "Date d'ajout", "en": "Adding date", "type": "date" }
+  ],
+  "menus": [
+    { "fr": "Accueil", "en": "Home", "id": "home", "disabled": true },
+    { "fr": "Montre", "en": "Watch", "id": "watch", "disabled": true },
+    { "fr": "Magasin", "en": "Shop", "id": "shop" },
+    { "fr": "Atelier", "en": "Workshop", "id": "workshop" },
+    { "fr": "Montres", "en": "Watches", "id": "watches" },
+    { "fr": "L'horlogerie", "en": "Horology", "id": "horo" },
+    { "fr": "Contact", "en": "Contact", "id": "contact" },
+    { "fr": "À propos", "en": "About Us", "id": "about" },
+    { "fr": "Mentions légales", "en": "Legal Notice", "id": "legal", "disabled": true }
+  ],
+  "fr": {
+    "lastarrival": "Dernières arrivées",
+    "rightsreserved": "HorlogerAixois, Tous droits réservés.",
+    "legalmentions": "Mentions légales",
+    "movements": "Les différents mouvements",
+    "horology_movements": "Les différents mouvements",
+    "revisions": "Nos révisions",
+    "polishing": "Polissage",
+    "piles": "Changements de piles",
+    "bracelets": "Nos bracelets",
+    "discover_horology": "Découvrir l'horlogerie",
+    "complications": "Les complications les plus répandues",
+    "similar": "Nos modèles similaires",
+    "watches": "Nos montres",
+    "tri": "Tri",
+    "filtre": "Filtre",
+    "delete_filters": "Supprimer les filtres",
+    "reinit_filters": "Réinitialiser les filtres",
+    "shop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "home": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "revisions_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "polishing_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "piles_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "bracelets_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "workshop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "horology": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+  },
+  "en": {
+    "lastarrival": "Last arrivals",
+    "rightsreserved": "HorlogerAixois, All rights reserved.",
+    "legalmentions": "Legal Notice",
+    "movements": "Different movements",
+    "horology_movements": "Different movements",
+    "revisions": "Our revisions",
+    "polishing": "Polishing",
+    "piles": "Battery replacement",
+    "bracelets": "Our straps",
+    "discover_horology": "Discover horology",
+    "complications": "Common complications",
+    "similar": "Our similar models",
+    "watches": "Out watches",
+    "tri": "Sort",
+    "filtre": "Filter",
+    "delete_filters": "Delete filters",
+    "reinit_filters": "Reset filters",
+    "shop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "home": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+    "revisions_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "polishing_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "piles_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "bracelets_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "workshop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "horology": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+  },
+  "blocs": {
+    "revisions": ["0.png", "1.png", "2.png"],
+    "polishing": ["0.png", "1.png", "2.png"],
+    "piles": ["0.png", "1.png", "2.png"],
+    "bracelets": ["0.png", "1.png", "2.png"]
+  },
+  "horology": {
+    "movements": [
+      {
+        "img": "0.png",
+        "fr": "Mécanique",
+        "en": "Mechanical"
+      },
+      {
+        "img": "1.png",
+        "fr": "Automatique",
+        "en": "Automatic"
+      },
+      {
+        "img": "2.png",
+        "fr": "Quartz",
+        "en": "Quartz"
+      }
+    ],
+    "complications": [
+      {
+        "img": "0.png",
+        "fr": "Date",
+        "en": "Date"
+      },
+      {
+        "img": "1.png",
+        "fr": "Chronographe",
+        "en": "Chronograph"
+      },
+      {
+        "img": "2.png",
+        "fr": "Réserve de marche",
+        "en": "Power Reserve"
+      },
+      {
+        "img": "3.png",
+        "fr": "Phase de lune",
+        "en": "Moonphase"
+      },
+      {
+        "img": "4.png",
+        "fr": "GMT",
+        "en": "GMT"
+      },
+      {
+        "img": "5.png",
+        "fr": "Tourbillon",
+        "en": "Tourbillon"
+      },
+      {
+        "img": "6.png",
+        "fr": "Sonnerie",
+        "en": "Striking"
+      }
+    ]
+  },
+  "workshop": {
+    "bigimg": "workshop.png",
+    "outils": [
+      {
+        "img": "0.png",
+        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      },
+      {
+        "img": "1.png",
+        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      },
+      {
+        "img": "2.png",
+        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      },
+      {
+        "img": "3.png",
+        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+      }
+    ],
+    "polissage": [
+      {
+        "img": "0.png",
+        "fr": "Polissage",
+        "en": "Polishing"
+      },
+      {
+        "img": "1.png",
+        "fr": "Satinage",
+        "en": "Satin Finishing"
+      },
+      {
+        "img": "2.png",
+        "fr": "Lapidage",
+        "en": "Lapping"
+      },
+      {
+        "img": "3.png",
+        "fr": "Touret à bande",
+        "en": "Belt Grinder"
+      },
+      {
+        "img": "4.png",
+        "fr": "Ultrasons",
+        "en": "Ultrasonic Cleaning"
+      }
+    ]
+  },
+  "shop": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png"]
+}

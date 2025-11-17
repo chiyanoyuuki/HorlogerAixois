@@ -1,0 +1,41 @@
+.movements, .complic{
+        padding-bottom:3vh;
+    }
+    .types{
+        display: flex;
+        justify-content: space-around;
+        margin: auto;
+        width:90%;
+        padding-bottom:2vh;
+        pointer-events: unset;
+        overflow-x: auto;
+        .type{
+            width:30vw;
+            max-width:400px;
+            min-width: 120px;
+            margin:0vh 1vw;
+            img{
+                width:100%;
+                object-fit: cover;
+                height:200px;
+            }
+        }
+        .menu{
+            padding-bottom:2vh;
+            height:40px;
+            font-size:20px;
+            line-height: 20px;
+            margin: 0vh 3vw;
+            font-family: "menus";
+            text-align: center;
+        }
+    }
+    .complic{
+        .types{
+            .type{
+                width:170px;
+                min-width:170px;
+                max-width:170px;
+            }
+        }
+    }
