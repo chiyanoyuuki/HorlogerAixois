@@ -1,52 +1,107 @@
 <div [class.mobile]="mobile">
-    <div class="lastarrival" *ngIf="montres.length>0" [class.catalog]="catalog">
-        <p class="title" *ngIf="!catalog">{{data[lg][title] | uppercase}}</p>
-        <div class="menus" *ngIf="filter">
-            <p *ngFor="let menu of menus;let i=index" class="clickable" (click)="clickMenu(i)" [class.clicked]="filterClicked==i">{{menu}}</p>
-        </div>
-        <div *ngIf="catalog" class="graybloc">
-            <p class="title">{{data[lg][title] | uppercase}}</p>
-            <div class="topoptions">
-                <div class="tri">
-                    <p>{{data[lg]['tri']}} :</p>
-                    <select [ngModel]="tri" (change)="onTriChange($event)">
-                        <option *ngFor="let option of getOrdres()" [value]="option.id">{{option[lg]}}</option>
-                    </select>
-                </div>
-                <div class="tri">
-                    <p>{{data[lg]['filtre']}} :</p>
-                    <select [(ngModel)]="selectedFilter">
-                        <option *ngFor="let option of getFilterOrdres()" [ngValue]="option">{{option[lg]}}</option>
-                    </select>
-                    <button class="add" (click)="addFilter()">+</button>
-                </div>
-                <div class="filter" *ngFor="let filt of getFilters();let i=index">
-                    <div class="titlediv">
-                        <button (click)="deleteFilter(filt)">x</button>
-                        <p class="title">{{filt[lg]}}</p>
-                    </div>
-                    <div class="filtermenus">
-                        <p *ngFor="let filtermenu of getFilterMenus(filt);let j=index" class="clickable" (click)="addExcluded(filt,j)" [class.clicked]="isClicked(i,j)" [class.disabled]="isDisabled(filt,filtermenu)">{{filtermenu}}</p>
-                    </div>
-                </div>
-                <div class="bottombuttons">
-                    <p class="clickable" *ngIf="hasFilter()" (click)="deleteFilters()">{{data[lg]['delete_filters']}}</p>
-                    <p class="clickable" *ngIf="hasActiveFilter()" (click)="deleteActiveFilters()">{{data[lg]['reinit_filters']}}</p>
-                </div>
-            </div>
-        </div>
-        <div class="content" [class.showContent]="showContent">
-        <p class="arrow clickable" (click)="nextPage(-1)" *ngIf="!mobile&&!catalog&&montresActuelles.length>5"><</p>
-        <div #montresContainer class="montres" [class.centered]="(!mobile && montresActuelles.length<5)||(mobile && montresActuelles.length<3)">
-            <div *ngFor="let montre of getMontresActuelles()" class="montre clickable" (click)="clickMontre(montre)">
-                <img src="./montres/{{montre[lg].img[0]}}" />
-                <p>{{montre[lg].reference}}</p>
-                <p>{{montre[lg].marque | uppercase}}</p>
-                <p>{{montre[lg].movement}}</p>
-                <p [innerHTML]="getTri(montre)" *ngIf="catalog"></p>
-            </div>
-        </div>
-        <p class="arrow clickable" (click)="nextPage(1)" *ngIf="!mobile&&!catalog&&montresActuelles.length>5">></p>
-        </div>
+  <div class="lastarrival" *ngIf="montres.length > 0" [class.catalog]="catalog">
+    <p class="title" *ngIf="!catalog">{{ data[lg][title] | uppercase }}</p>
+    <div class="menus" *ngIf="filter">
+      <p
+        *ngFor="let menu of menus; let i = index"
+        class="clickable"
+        (click)="clickMenu(i)"
+        [class.clicked]="filterClicked == i"
+      >
+        {{ menu }}
+      </p>
     </div>
+    <div *ngIf="catalog" class="graybloc">
+      <p class="title">{{ data[lg][title] | uppercase }}</p>
+      <div class="topoptions">
+        <div class="tri">
+          <p>{{ data[lg]['tri'] }} :</p>
+          <select [ngModel]="tri" (change)="onTriChange($event)">
+            <option *ngFor="let option of getOrdres()" [value]="option.id">{{ option[lg] }}</option>
+          </select>
+        </div>
+        <div class="tri">
+          <p>{{ data[lg]['filtre'] }} :</p>
+          <select [(ngModel)]="selectedFilter">
+            <option *ngFor="let option of getFilterOrdres()" [ngValue]="option">
+              {{ option[lg] }}
+            </option>
+          </select>
+          <button class="add" (click)="addFilter()">+</button>
+        </div>
+        <div class="filter" *ngFor="let filt of getFilters(); let i = index">
+          <div class="titlediv">
+            <button (click)="deleteFilter(filt)">x</button>
+            <p class="title">{{ filt[lg] }}</p>
+          </div>
+          <div class="filtermenus">
+            <p
+              *ngFor="let filtermenu of getFilterMenus(filt); let j = index"
+              class="clickable"
+              (click)="addExcluded(filt, j)"
+              [class.clicked]="isClicked(i, j)"
+              [class.disabled]="isDisabled(filt, filtermenu)"
+            >
+              {{ filtermenu }}
+            </p>
+          </div>
+        </div>
+        <div class="bottombuttons">
+          <p class="clickable" *ngIf="hasFilter()" (click)="deleteFilters()">
+            {{ data[lg]['delete_filters'] }}
+          </p>
+          <p class="clickable" *ngIf="hasActiveFilter()" (click)="deleteActiveFilters()">
+            {{ data[lg]['reinit_filters'] }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="catalog">
+      <input
+        #searchInput
+        type="text"
+        class="search"
+        placeholder="{{ data[lg].search }}"
+        [(ngModel)]="search"
+      />
+      <img class="loupe" src="loupe.png" />
+    </div>
+
+    <div class="content" [class.showContent]="showContent">
+      <p
+        class="arrow clickable"
+        (click)="nextPage(-1)"
+        *ngIf="!mobile && !catalog && montresActuelles.length > 5"
+      >
+        <
+      </p>
+      <div
+        #montresContainer
+        class="montres"
+        [class.centered]="
+          (!mobile && montresActuelles.length < 5) || (mobile && montresActuelles.length < 3)
+        "
+      >
+        <div
+          *ngFor="let montre of getMontresActuelles()"
+          class="montre clickable"
+          (click)="clickMontre(montre)"
+        >
+          <img src="./montres/{{ montre[lg].img[0] }}" />
+          <p [innerHTML]="highlight(montre[lg].reference)"></p>
+          <p [innerHTML]="highlight(montre[lg].marque)"></p>
+          <p [innerHTML]="highlight(montre[lg].modele)"></p>
+          <p [innerHTML]="highlight(getTri(montre))" *ngIf="catalog"></p>
+        </div>
+      </div>
+      <p
+        class="arrow clickable"
+        (click)="nextPage(1)"
+        *ngIf="!mobile && !catalog && montresActuelles.length > 5"
+      >
+        >
+      </p>
+    </div>
+  </div>
 </div>

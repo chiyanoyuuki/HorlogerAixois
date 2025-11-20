@@ -1,190 +1,231 @@
-
-*{
-    position: relative;
-    margin:0;
-    transition: 0.5s;
-    scrollbar-color: var(--darkorange) var(--orange);
-    scrollbar-width: thin;
+* {
+  position: relative;
+  margin: 0;
+  transition: 0.5s;
+  scrollbar-color: var(--darkorange) var(--orange);
+  scrollbar-width: thin;
 }
 
-.lastarrival{
-    padding-top:1vh;
-    margin:5vh 0vw;
-    .title{
-        font-weight:bold;
-        margin-bottom:2vh;
+.lastarrival {
+  padding-top: 1vh;
+  margin: 5vh 0vw;
+  .title {
+    font-weight: bold;
+    margin-bottom: 2vh;
+    text-align: center;
+    font-size: 30px;
+    font-family: 'menus';
+  }
+  .content {
+    opacity: 0;
+    display: flex;
+    width: 100%;
+    .centered {
+      justify-content: center;
+      margin-bottom: 8px !important;
+    }
+    .montres {
+      margin: auto;
+      padding: 2vh 2vw;
+      display: flex;
+      width: 90%;
+      overflow-x: auto;
+      .montre {
+        width: 20%;
+        flex-shrink: 0;
+        img {
+          margin: auto;
+          display: flex;
+        }
+        p {
+          text-align: center;
+        }
+        p:nth-child(2) {
+          margin-top: 1vh;
+          font-size: 10px;
+          opacity: 0.5;
+        }
+        p:nth-child(3),
+        p:nth-child(5) {
+          margin-top: 1vh;
+          font-size: 12px;
+          font-weight: bold;
+        }
+        p:nth-child(4) {
+          margin-top: 1vh;
+          font-size: 10px;
+        }
+        p:nth-child(5) {
+          border-top: 1px solid black;
+          width: fit-content;
+          margin: auto;
+          padding-top: 1vh;
+          margin-top: 1vh;
+        }
+      }
+    }
+    .arrow {
+      width: 5%;
+      font-weight: bold;
+      font-family: 'menus';
+      font-size: 50px;
+      height: fit-content;
+      top: 80px;
+      text-align: center;
+    }
+  }
+  .showContent {
+    opacity: 1;
+  }
+  .menus {
+    display: flex;
+    margin: auto;
+    width: fit-content;
+    padding-bottom: 2vh;
+    pointer-events: unset;
+    p {
+      font-size: 20px;
+      margin: 0vh 3vw;
+      font-family: 'menus';
+    }
+    .clicked {
+      opacity: 0.5;
+    }
+  }
+  .topoptions {
+    width: 90%;
+    left: 5%;
+    display: flex;
+    flex-flow: wrap;
+    padding-bottom: 3vh;
+    margin-bottom: 3vh;
+    .tri {
+      display: flex;
+      width: 50%;
+      margin-bottom: 2vh;
+      p {
+        width: 50%;
         text-align: center;
-        font-size:30px;
-        font-family: "menus";
+        margin-right: 5px;
+        font-size: 20px;
+        font-family: 'menus';
+      }
+      select {
+        width: 50%;
+      }
+      .add {
+        width: 25px;
+        margin-left: 2vw;
+      }
     }
-    .content{
-        opacity:0;
-        display:flex;
-        width:100%;
-        .centered{
-            justify-content: center;
-            margin-bottom:8px!important;
-        }
-        .montres{
-            margin:auto;
-            padding:2vh 2vw;
-            display:flex;
-            width:90%;
-            overflow-x: auto;
-            .montre{
-                width:20%;
-                flex-shrink: 0;
-                img{
-                    margin: auto;
-                    display: flex;
-                }
-                p{
-                    text-align: center;
-                }
-                p:nth-child(2){
-                    margin-top:1vh;
-                    font-size:10px;
-                    opacity:0.5;
-                }
-                p:nth-child(3),p:nth-child(5){
-                    margin-top:1vh;
-                    font-size:12px;
-                    font-weight: bold;
-                }
-                p:nth-child(4){
-                    margin-top:1vh;
-                    font-size:10px;
-                }
-                p:nth-child(5){
-                    border-top:1px solid black;
-                    width: fit-content;
-                    margin: auto;
-                    padding-top:1vh;
-                    margin-top:1vh;
-                }
-            }
-        }
-        .arrow{
-            width:5%;
-            font-weight:bold;
-            font-family: "menus";
-            font-size:50px;
-            height: fit-content;
-            top: 80px;
-            text-align: center;
-        }
-    }
-    .showContent{
-        opacity:1;
-    }
-    .menus{
+    .filter {
+      width: 100%;
+      margin-bottom: 1vh;
+      .titlediv {
         display: flex;
-        margin: auto;
-        width:fit-content;
-        padding-bottom:2vh;
-        pointer-events: unset;
-        p{
-            font-size:20px;
-            margin: 0vh 3vw;
-            font-family: "menus";
+        margin-bottom: 5px;
+        .title {
+          font-size: 20px;
+          margin: 0;
+          padding: 0;
+          padding-left: 10px;
+          text-align: left;
         }
-        .clicked{
-            opacity:0.5;
-        }
-    }
-    .topoptions{
-        width:90%;
-        left:5%;
-        display:flex;
+      }
+      .filtermenus {
+        display: flex;
         flex-flow: wrap;
-        padding-bottom:3vh;
-        margin-bottom:3vh;
-        .tri{
-            display:flex;
-            width:50%;
-            margin-bottom:2vh;
-            p{
-                width:50%;
-                text-align: center;
-                margin-right:5px;
-                font-size:20px;
-                font-family: "menus";
-            }
-            select{
-                width:50%;
-            }
-            .add{
-                width:25px;
-                margin-left:2vw;
-            }
+        p {
+          text-align: center;
+          width: 20%;
+          margin-bottom: 1vh;
+          opacity: 0.6;
+          font-style: italic;
         }
-        .filter{
-            width:100%;
-            margin-bottom:1vh;
-            .titlediv{
-                display:flex;
-                margin-bottom:5px;
-                .title{
-                    font-size:20px;
-                    margin:0;
-                    padding:0;
-                    padding-left:10px;
-                    text-align: left;
-                }
-            }
-            .filtermenus{
-                display:flex;
-                flex-flow: wrap;
-                p{
-                    text-align: center;
-                    width:20%;
-                    margin-bottom:1vh;
-                    opacity:0.6;
-                    font-style: italic;
-                }
-                .disabled{
-                    opacity:0.2;
-                }
-                .clicked{
-                    opacity:1;
-                    font-weight: bold;
-                    color:var(--darkorange);
-                    font-style: normal;
-                }
-            }
+        .disabled {
+          opacity: 0.2;
         }
-        .bottombuttons{
-            display: flex;
-            justify-content: space-around;
+        .clicked {
+          opacity: 1;
+          font-weight: bold;
+          color: var(--darkorange);
+          font-style: normal;
+        }
+      }
+    }
+    .bottombuttons {
+      display: flex;
+      justify-content: space-around;
+      width: 100%;
+      top: 20px;
+    }
+  }
+  .search {
+    width: 90%;
+    left: 5%;
+    border: unset;
+    border-bottom: 1px solid var(--darkorange);
+    text-align: center;
+    font-weight: bold;
+    padding-top: 1vh;
+    padding-bottom: 1vh;
+    margin-bottom: 1vh;
+    outline: none;
+  }
+  .loupe {
+    height: 15px;
+    top: 3px;
+  }
+}
+.catalog {
+  .montres {
+    flex-flow: wrap;
+    justify-content: center;
+    .montre {
+      margin-bottom: 4vh;
+    }
+  }
+}
+
+.mobile {
+  .lastarrival {
+    .content {
+      .montres {
+        .montre {
+          width: 40% !important;
+          img {
             width: 100%;
-            top:20px;
+            height: 25vh;
+            object-fit: contain;
+          }
         }
+      }
     }
-}
-.catalog{
-    .montres{
-        flex-flow: wrap;
-        justify-content: center;
-        .montre{
-            margin-bottom:4vh;
+    .topoptions {
+      .tri {
+        display: unset;
+        p {
+          width: 100%;
+          text-align: center;
         }
-    }
-}
-
-.mobile{
-    .lastarrival{
-        .content{
-            .montres{
-                .montre{
-                    width:40%!important;
-                    img{
-                        width: 100%;
-                        height: 25vh;
-                        object-fit: contain;
-                    }
-                }
-            }
+        select {
+          width: 70%;
+          left: 15%;
         }
+        button {
+          right: 0px;
+          position: absolute;
+        }
+      }
+      .filter {
+        .filtermenus {
+          justify-content: center;
+          p {
+            width: 40%;
+            margin-bottom: 2vh;
+          }
+        }
+      }
     }
+  }
 }
-
