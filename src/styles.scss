@@ -27,6 +27,7 @@
   transition: 0.5s;
   scrollbar-color: var(--darkorange) var(--orange);
   scrollbar-width: thin;
+  color: var(--text);
 }
 
 body {
@@ -83,7 +84,7 @@ button:hover {
   position: fixed;
   top: 46px;
   z-index: 1;
-  background-color: white;
+  background-color: var(--bg);
   width: calc(100vw - 4vw);
   opacity: 0;
   height: 100%;
@@ -159,7 +160,7 @@ button:hover {
       width: 0px;
       opacity: 0;
       background-color: var(--lightorange);
-      color: black;
+      color: var(--text);
       outline: none;
       border: 1px solid var(--darkorange);
     }
@@ -668,5 +669,7 @@ button:hover {
 }
 
 .highlight {
-  color: red !important;
+  background-color: var(--orange);
+  color: var(--darkorange) !important;
+  font-weight: bold;
 }
