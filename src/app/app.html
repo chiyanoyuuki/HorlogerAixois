@@ -41,7 +41,7 @@
       ></p>
     </div>
 
-    <div class="menus">
+    <div class="menus" *ngIf="isDevMode()">
       <p
         *ngFor="let menu of getMenus2()"
         class="clickable"
