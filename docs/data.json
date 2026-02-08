@@ -1,36 +1,26 @@
 {
   "ordre": [
-    { "id": "marque", "fr": "Marque", "en": "Brand", "type": "text" },
-    { "id": "modele", "fr": "Modèle", "en": "Model", "type": "text" },
-    { "id": "annee", "fr": "Année", "en": "Year", "type": "date" },
-    { "id": "movement", "fr": "Mouvement", "en": "Movement", "type": "text" },
-    { "id": "calibre", "fr": "Calibre", "en": "Caliber", "type": "number" },
-    {
-      "id": "reserve_de_marche",
-      "fr": "Réserve de marche",
-      "en": "Power reserve",
-      "type": "number"
-    },
-    { "id": "alternance_heure", "fr": "Alternance/heure", "en": "VPH", "type": "number" },
-    { "id": "etancheite", "fr": "Étanchéité", "en": "Water resistance", "type": "number" },
-    { "id": "boitier", "fr": "Boîtier", "en": "Case", "type": "text" },
-    { "id": "fond", "fr": "Fond", "en": "Caseback", "type": "text" },
-    { "id": "glace", "fr": "Glace", "en": "Crystal", "type": "text" },
-    { "id": "cadran", "fr": "Cadran", "en": "Dial", "type": "text" },
-    { "id": "entre_corne", "fr": "Entre-corne", "en": "Lug width", "type": "number" },
-    { "id": "boucle", "fr": "Boucle", "en": "Clasp", "type": "text" },
-    { "id": "taille", "fr": "Taille", "en": "Size", "type": "text" },
-    { "id": "couronne", "fr": "Couronne", "en": "Crown", "type": "text" },
-    { "id": "lunette", "fr": "Lunette", "en": "Bezel", "type": "text" },
-    { "id": "index", "fr": "Index", "en": "Indices", "type": "text" },
-    {
-      "id": "tour_poignet",
-      "fr": "Tour de poignet",
-      "en": "Wrist circumference",
-      "type": "number"
-    },
-    { "id": "largeur_boucle", "fr": "Largeur de boucle", "en": "Clasp width", "type": "number" },
-    { "id": "arrivee", "fr": "Date d'ajout", "en": "Adding date", "type": "date" }
+    { "id": "brand", "fr": "Marque", "en": "Brand", "type": "text" },
+    { "id": "model", "fr": "Modèle", "en": "Model", "type": "text" },
+    { "id": "year", "fr": "Année", "en": "Year", "type": "text" },
+    { "id": "movementType", "fr": "Mouvement", "en": "Movement", "type": "text" },
+    { "id": "caliber", "fr": "Calibre", "en": "Caliber", "type": "text" },
+    { "id": "powerReserve", "fr": "Réserve de marche", "en": "Power reserve", "type": "text" },
+    { "id": "frequency", "fr": "Alternance/heure", "en": "VPH", "type": "text" },
+    { "id": "waterResistance", "fr": "Étanchéité", "en": "Water resistance", "type": "text" },
+    { "id": "case", "fr": "Boîtier", "en": "Case", "type": "text" },
+    { "id": "caseBack", "fr": "Fond", "en": "Caseback", "type": "text" },
+    { "id": "glass", "fr": "Glace", "en": "Crystal", "type": "text" },
+    { "id": "dial", "fr": "Cadran", "en": "Dial", "type": "text" },
+    { "id": "lugWidth", "fr": "Entre-corne", "en": "Lug width", "type": "text" },
+    { "id": "buckle", "fr": "Boucle", "en": "Clasp", "type": "text" },
+    { "id": "size", "fr": "Taille", "en": "Size", "type": "text" },
+    { "id": "crown", "fr": "Couronne", "en": "Crown", "type": "text" },
+    { "id": "bezel", "fr": "Lunette", "en": "Bezel", "type": "text" },
+    { "id": "indexes", "fr": "Index", "en": "Indices", "type": "text" },
+    { "id": "wristSize", "fr": "Tour de poignet", "en": "Wrist circumference", "type": "text" },
+    { "id": "buckleWidth", "fr": "Largeur de boucle", "en": "Clasp width", "type": "text" },
+    { "id": "created_at", "fr": "Date d'ajout", "en": "Adding date", "type": "text" }
   ],
   "menus": [
     { "fr": "Accueil", "en": "Home", "id": "home", "disabled": true },
@@ -38,7 +28,7 @@
     { "fr": "Magasin", "en": "Shop", "id": "shop" },
     { "fr": "Atelier", "en": "Workshop", "id": "workshop" },
     { "fr": "Montres", "en": "Watches", "id": "watches" },
-    { "fr": "L'horlogerie", "en": "Horology", "id": "horo" },
+    { "fr": "L'horlogerie", "en": "Horology", "id": "horology" },
     { "fr": "Contact", "en": "Contact", "id": "contact" },
     { "fr": "À propos", "en": "About Us", "id": "about" },
     { "fr": "Mentions légales", "en": "Legal Notice", "id": "legal", "disabled": true }
@@ -48,12 +38,12 @@
     "rightsreserved": "HorlogerAixois, Tous droits réservés.",
     "legalmentions": "Mentions légales",
     "movements": "Les différents mouvements",
-    "horology_movements": "Les différents mouvements",
+    "horology_movements": "On distingue plusieurs types de mouvements :",
     "revisions": "Nos révisions",
     "polishing": "Polissage",
     "piles": "Changements de piles",
     "bracelets": "Nos bracelets",
-    "discover_horology": "Découvrir l'horlogerie",
+    "discover_horology": "L’Horlogerie : Science et Technique de la Mesure du Temps",
     "complications": "Les complications les plus répandues",
     "similar": "Nos modèles similaires",
     "watches": "Nos montres",
@@ -68,8 +58,11 @@
     "piles_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "bracelets_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "workshop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "horology": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "search": "Rechercher.."
+    "horology": "L’horlogerie est la discipline technique dédiée à la conception, la fabrication et la régulation des instruments de mesure du temps. Elle combine mécanique de précision, micro- ingénierie et souvent électronique pour produire des garde-temps fiables et exacts. Les horlogers travaillent sur des mouvements composés de multiples composants : roues, pignons, balanciers, ressorts moteurs et échappements, dont l’agencement permet de convertir l’énergie emmagasinée en un rythme régulier mesurant les secondes, minutes et heures.",
+    "search": "Rechercher..",
+    "horology_2": "Les innovations horlogères impliquent également la miniaturisation, la résistance aux chocs et à la variation de température, et l’optimisation du rendement énergétique des mouvements. Au-delà de la mécanique, l’horlogerie moderne intègre souvent des complications telles que les calendriers perpétuels, chronographes, phases de lune ou tourbillons, qui illustrent la complexité et le savoir-faire technique nécessaire à leur conception.",
+    "horology_3": "En résumé, l’horlogerie est un domaine où science, précision et ingéniosité mécanique se rencontrent pour transformer le temps, concept abstrait, en un instrument tangible et fonctionnel.",
+    "bigtitle": "L’Horloger Aixois – Votre spécialiste horloger au cœur d’Aix-en-Provence"
   },
   "en": {
     "lastarrival": "Last arrivals",
@@ -99,6 +92,34 @@
     "horology": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     "search": "Search.."
   },
+  "home": {
+    "fr": [
+      {
+        "title": "L’Horloger Aixois – Votre spécialiste horloger au cœur d’Aix-en-Provence"
+      },
+      {
+        "text": "Situé au <b>18 rue de la Glacière, 13100 Aix-en-Provence</b>, L’Horloger Aixois vous accueille du <b>mardi au samedi, de 10h à 13h et de 15h à 18h30.</b>"
+      },
+      {
+        "text": "Notre boutique est entièrement dédiée à l’univers du temps, avec un savoir-faire authentique au service des amoureux de belles montres."
+      },
+      {
+        "title": "Entretien et réparation des grandes marques horlogères"
+      },
+      {
+        "text": "Spécialisés dans l’entretien, la restauration et la réparation de montres de prestige, nous mettons en œuvre des techniques traditionnelles et des outils de haute précision."
+      },
+      {
+        "text": "Qu’il s’agisse d’un simple réglage, d’une révision complète ou d’une intervention plus délicate, votre montre est confiée à un horloger passionné et expérimenté."
+      },
+      {
+        "title": "Montres de collection d’occasion"
+      },
+      {
+        "text": "L’Horloger Aixois propose également une sélection rigoureuse de <b>montres de collection d’occasion</b>, toutes authentifiées et révisées dans notre atelier. Des pièces rares, uniques ou iconiques, destinées aux collectionneurs comme aux amateurs souhaitant découvrir l’horlogerie d’exception."
+      }
+    ]
+  },
   "blocs": {
     "revisions": ["0.png", "1.png", "2.png"],
     "polishing": ["0.png", "1.png", "2.png"],
@@ -109,17 +130,17 @@
     "movements": [
       {
         "img": "0.png",
-        "fr": "Mécanique",
+        "fr": "<b>Mécaniques manuels</b>, où le ressort moteur est tendu à la main et régule l’énergie par un échappement et un balancier oscillant.",
         "en": "Mechanical"
       },
       {
         "img": "1.png",
-        "fr": "Automatique",
+        "fr": "<b>Automatiques</b>, où un rotor récupère l’énergie du mouvement du poignet pour maintenir le ressort sous tension.",
         "en": "Automatic"
       },
       {
         "img": "2.png",
-        "fr": "Quartz",
+        "fr": "<b>Quartz</b>, utilisant un cristal vibrant à une fréquence précise, couplé à un circuit électronique pour obtenir une précision supérieure à celle des mécanismes mécaniques classiques.",
         "en": "Quartz"
       }
     ],
@@ -162,25 +183,36 @@
     ]
   },
   "workshop": {
+    "fr": [
+      "Fort de <b>15 ans d’expérience</b> au sein de grandes manufactures horlogères et en <b>SAV haut de gamme</b>, notre atelier met à votre service un savoir-faire acquis auprès des plus prestigieuses maisons.",
+      "Équipé des <b>meilleures machines et outils</b>, répondant aux <b>standards et certifications</b> des grandes marques, l’atelier garantit une qualité d’intervention irréprochable, du diagnostic à la remise en état complète.",
+      "Nous disposons également d’un <b>important stock de pièces détachées originales</b>, anciennes comme modernes, provenant des grandes marques horlogères. Cela nous permet d’assurer des réparations authentiques, respectueuses de l’intégrité et de la valeur de chaque garde-temps.",
+      "Passionnés par l’horlogerie historique, nous accordons une attention particulière aux <b>montres vintage</b> : patines, proportions, composants d’origine… chaque détail qui fonde leur valeur est soigneusement préservé.",
+      "Chez <b>L’Horloger Aixois</b>, chaque montre est entretenue <b>comme si c’était la nôtre</b>. Exigence, respect et précision guident chacun de nos gestes afin d’offrir à votre montre le soin qu’elle mérite."
+    ],
     "bigimg": "workshop.png",
     "outils": [
       {
-        "img": "0.png",
+        "nom": "reglage",
+        "img": ["0.png", "1.png", "2.png"],
         "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       },
       {
-        "img": "1.png",
+        "nom": "etancheite",
+        "img": ["0.png", "1.png", "2.png"],
         "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       },
       {
-        "img": "2.png",
+        "nom": "machinealaver",
+        "img": ["0.png", "1.png", "2.png", "3.png", "4.png"],
         "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       },
       {
-        "img": "3.png",
+        "nom": "simulateur",
+        "img": ["0.png", "1.png"],
         "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
         "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
       }
@@ -213,5 +245,97 @@
       }
     ]
   },
-  "shop": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png"]
+  "shop": {
+    "bigimg": "homeimg.png",
+    "fr": [
+      "Au <b>18 rue de la Glacière, à Aix-en-Provence</b>, notre boutique vous ouvre ses portes <b>du mardi au samedi, de 10h à 13h et de 15h à 18h30.</b>",
+      "Ici, chaque visite est un moment privilégié : <b>accueil professionnel et chaleureux</b>, conseils personnalisés, contrôle et entretien de vos montres. Nous mettons notre expertise au service de votre passion pour l’horlogerie.",
+      "Découvrez également notre <b>sélection de montres de collection</b>, choisies pour leur caractère et leur intérêt unique, parfaites pour les amateurs et les collectionneurs.",
+      "Venez vivre une expérience horlogère où <b>passion et savoir-faire</b> se rencontrent."
+    ],
+    "images": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png"]
+  },
+  "contact": [
+    {
+      "fr": "Nom",
+      "en": "Last Name",
+      "placeholder": "Dupont",
+      "type": "text",
+      "model": ""
+    },
+    {
+      "fr": "Prénom",
+      "en": "First Name",
+      "placeholder": "Paul",
+      "type": "text",
+      "model": ""
+    },
+    {
+      "fr": "Téléphone",
+      "en": "Telephone",
+      "placeholder": "01 02 03 04 05",
+      "type": "text",
+      "model": ""
+    },
+    {
+      "fr": "Mail",
+      "en": "Mail",
+      "placeholder": "paul.dupont@outlook.com",
+      "type": "text",
+      "model": ""
+    },
+    {
+      "fr": "Objet de la demande",
+      "en": "Object",
+      "placeholder": "J'aimerais faire réparer ma montre cassée",
+      "type": "textarea",
+      "model": ""
+    }
+  ],
+  "about": [
+    {
+      "textes": [
+        "Au cœur du centre historique d’Aix-en-Provence, L’Horloger Aixois perpétue une histoire familiale qui traverse les générations.",
+        "Installés au <b>18 rue de la Glacière</b>, nous représentons aujourd’hui la <b>troisième génération d’horlogers</b>, héritiers d’un savoir-faire transmis avec passion, précision et respect du temps."
+      ]
+    },
+    {
+      "title": "Une tradition familiale, un métier de précision",
+      "textes": [
+        "Depuis plusieurs décennies, notre famille cultive l’art horloger avec la même exigence : offrir à chaque montre le soin qu’elle mérite.",
+        "Cet héritage est au cœur de notre atelier, où chaque intervention mêle techniques traditionnelles, gestes maîtrisés et amour du métier."
+      ]
+    },
+    {
+      "title": "Un parcours forgé au sein des grandes maisons",
+      "textes": [
+        "Titulaire d’un <b>Brevet des Métiers d’Art Horlogerie avec mention</b>, j’ai poursuivi ma formation en rejoignant <b>plusieurs manufactures suisses de renom</b>, où j’ai pu approfondir ma connaissance des mouvements prestigieux et des complications horlogères.",
+        "J’ai ensuite consacré <b>dix années au Service Après-Vente Haute Horlogerie</b>, période durant laquelle j’ai obtenu <b>de multiples agréments techniques auprès de grandes marques horlogères.</b>",
+        "Ces certifications m’ont permis d’intervenir directement sur leurs modèles, selon leurs protocoles, leurs standards exigeants et leur philosophie de l’excellence.",
+        "Ce parcours riche et rigoureux nourrit aujourd’hui la qualité des services que je propose au sein de l’atelier."
+      ]
+    },
+    {
+      "title": "Un atelier dédié à la précision et au soin",
+      "textes": [
+        "Notre atelier est équipé pour répondre aux besoins des montres contemporaines comme des pièces anciennes.",
+        "Révisions complètes, diagnostic, réglages fins, entretien des complications, restauration : chaque intervention est réalisée avec minutie, transparence et respect des normes des grandes maisons.",
+        "Nous prenons le temps d’expliquer chaque étape afin que vous sachiez exactement ce que reçoit votre montre."
+      ]
+    },
+    {
+      "title": "Montres de collection : des pièces choisies avec cœur et exigence",
+      "textes": [
+        "L’Horloger Aixois propose également une sélection de <b>montres de collection d’occasion</b>, toutes authentifiées, révisées et vérifiées minutieusement dans notre atelier.",
+        "Nous choisissons des montres porteuses d’histoire, de caractère et de qualité, pour offrir aux passionnés des pièces uniques et fiables."
+      ]
+    },
+    {
+      "title": "Accueil, conseil et confiance",
+      "textes": [
+        "Chez L’Horloger Aixois, nous entretenons une relation simple et chaleureuse avec nos clients.",
+        "Que vous veniez pour une réparation, un entretien, un achat ou un conseil, vous trouverez toujours une écoute attentive, un accompagnement transparent et un véritable plaisir à partager notre passion."
+      ]
+    }
+  ]
 }

@@ -1,0 +1,34 @@
+<div class="loading-overlay" *ngIf="loading">
+  <div class="spinner"></div>
+</div>
+
+<input
+  class="seldoss"
+  type="file"
+  webkitdirectory
+  multiple
+  (change)="onRootFolderSelected($event)"
+/>
+
+<div *ngIf="selectedWatch as watch">
+  <h2>{{ watch.marque }} {{ watch.modele }}</h2>
+
+  <div class="form-grid">
+    <div *ngFor="let field of watchInputs">
+      <label>{{ field.label }}</label>
+
+      <input [type]="field.type" [(ngModel)]="field.value" [class.missing]="!field.fromTxt" />
+    </div>
+  </div>
+
+  <div class="images" *ngIf="watch.img?.length">
+    <div class="image-grid">
+      <img *ngFor="let file of watch.img" [src]="getFileUrl(file)" [alt]="file.name" />
+    </div>
+  </div>
+
+  <div class="boutons" *ngIf="selectedWatch as watch">
+    <button>Ajouter</button>
+    <button (click)="okwatch()">Suivant</button>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+<div class="page watches" *ngIf="app.data" [class.showContent]="app.showContent">
+  <app-lastarrival [tri]="'arrivee'" [title]="'lastarrival'" (montreClick)="onMontreClick($event)">
+  </app-lastarrival>
+
+  <app-lastarrival
+    [tri]="'created_at'"
+    [title]="'watches'"
+    [catalog]="true"
+    (montreClick)="onMontreClick($event)"
+  >
+  </app-lastarrival>
+</div>

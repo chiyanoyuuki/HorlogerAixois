@@ -1,29 +1,33 @@
-<div class="movements graybloc">
-    <p class="title">{{data[lg].horology_movements | uppercase}}</p>
-    <div class="types">
-    <div *ngFor="let menu of data.horology.movements" class="type">
-        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
-        <img src="./horology/movements/{{menu.img}}"/>
+<div class="movements graybloc" *ngIf="app.data" [class.showContent]="app.showContent">
+  <p class="title">{{ app.data[app.lg].horology_movements | uppercase }}</p>
+  <div class="types">
+    <div *ngFor="let menu of app.data.horology.movements" class="clickable2 type">
+      <img src="./horology/movements/{{ menu.img }}" />
+      <p class="menu2" [innerHTML]="menu[app.lg]"></p>
     </div>
-    </div>
+  </div>
 </div>
 
-<div class="complic">
-    <p class="title">{{data[lg].complications | uppercase}}</p>
-    <div class="types">
-    <div *ngFor="let menu of data.horology.complications" class="type">
-        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
-        <img src="./horology/complications/{{menu.img}}"/>
+<p [innerHTML]="app.data[app.lg].horology_2" class="bloc"></p>
+
+<div class="complic graybloc">
+  <p class="title">{{ app.data[app.lg].complications | uppercase }}</p>
+  <div class="types">
+    <div *ngFor="let menu of app.data.horology.complications" class="type">
+      <p class="clickable menu" [innerHTML]="menu[app.lg] | uppercase"></p>
+      <img src="./horology/complications/{{ menu.img }}" />
     </div>
-    </div>
+  </div>
 </div>
+
+<p [innerHTML]="app.data[app.lg].horology_3" class="bloc"></p>
 
 <div class="complic graybloc" *ngIf="polish">
-    <p class="title">{{data[lg].polishing | uppercase}}</p>
-    <div class="types">
-    <div *ngFor="let menu of data.workshop.polissage" class="type">
-        <p class="clickable menu" [innerHTML]="menu[lg] | uppercase"></p>
-        <img src="./workshop/polissage/{{menu.img}}"/>
+  <p class="title">{{ app.data[app.lg].polishing | uppercase }}</p>
+  <div class="types">
+    <div *ngFor="let menu of app.data.workshop.polissage" class="type">
+      <p class="clickable menu" [innerHTML]="menu[app.lg] | uppercase"></p>
+      <img src="./workshop/polissage/{{ menu.img }}" />
     </div>
-    </div>
+  </div>
 </div>

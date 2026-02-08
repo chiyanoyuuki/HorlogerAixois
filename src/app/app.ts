@@ -1,52 +1,33 @@
-import {
-  Component,
-  ElementRef,
-  HostListener,
-  isDevMode,
-  OnInit,
-  Renderer2,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { Component, HostListener, isDevMode, OnInit, Renderer2 } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { Lastarrival } from './lastarrival/lastarrival';
-import { Movementscomplic } from './movementscomplic/movementscomplic';
+import { Service } from './service';
 
 @Component({
   selector: 'app-root',
-  imports: [FormsModule, CommonModule, Lastarrival, Movementscomplic],
+  imports: [FormsModule, CommonModule, RouterOutlet],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App implements OnInit {
   link = 'http' + (isDevMode() ? '' : 's') + '://chiyanh.cluster031.hosting.ovh.net/';
 
-  lg = 'fr';
   globalsearch = '';
   menuClicked = 'home';
 
   montreClicked: any;
-  data: any;
   currentYear: any;
-  montres: any = [];
   movements: any = [];
 
-  indexImg = 0;
-  image = 0;
   lastArrivalPage = 0;
   portraittreshold = 800;
   mobiletreshold = 550;
   lastScrollTop = 0;
 
   globalsearchvisible = false;
-  mobilemenuvisible = false;
-  showContent = true;
   paysage = false;
-  mobile = false;
   isScrolled = false;
   forceSearch = false;
 
@@ -73,7 +54,11 @@ export class App implements OnInit {
     this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // protection iOS
   }
 
-  constructor(private renderer: Renderer2, private http: HttpClient) {}
+  constructor(
+    private renderer: Renderer2,
+    private http: HttpClient,
+    public app: Service,
+  ) {}
 
   async ngOnInit() {
     const saved = localStorage.getItem('theme');
@@ -84,16 +69,15 @@ export class App implements OnInit {
     this.currentYear = new Date().getFullYear();
 
     //const res = await fetch('data.json');
-    //this.data = await res.json();
+    //this.app.data = await res.json();
 
     this.getData();
 
-    const resmontres = await fetch('montres.json');
-    this.montres = await resmontres.json();
+    this.app.getWatches();
 
     const uniqueMovementsMap = new Map<string, { fr: string; en: string }>();
 
-    this.montres.forEach((m: any) => {
+    this.app.montres.forEach((m: any) => {
       const fr = m.fr.movement;
       const en = m.en.movement;
 
@@ -109,10 +93,17 @@ export class App implements OnInit {
       this.checkDimensions();
       clearInterval(int);
     }, 500);
+  }
 
-    setInterval(() => {
-      this.image++;
-    }, 5000);
+  clickMenu(menu: string, montre: any = undefined, search: boolean = false) {
+    this.app.clickMenu(menu, montre, search);
+    if (!this.app.mobilemenuvisible) {
+      this.renderer.setStyle(document.body, 'overflow-y', 'auto');
+      this.renderer.setStyle(document.body, 'padding-right', '0px');
+    } else {
+      this.renderer.setStyle(document.body, 'overflow-y', 'hidden');
+      this.renderer.setStyle(document.body, 'padding-right', '8px');
+    }
   }
 
   checkDimensions() {
@@ -121,14 +112,14 @@ export class App implements OnInit {
     else this.paysage = true;
 
     if (window.innerHeight > window.innerWidth && window.innerWidth < this.mobiletreshold)
-      this.mobile = true;
-    else this.mobile = false;
+      this.app.mobile = true;
+    else this.app.mobile = false;
   }
 
   clickMobileMenu() {
-    this.mobilemenuvisible = !this.mobilemenuvisible;
-    if (this.mobile) return;
-    if (!this.mobilemenuvisible) {
+    this.app.mobilemenuvisible = !this.app.mobilemenuvisible;
+    if (this.app.mobile) return;
+    if (!this.app.mobilemenuvisible) {
       this.renderer.setStyle(document.body, 'overflow-y', 'auto');
       this.renderer.setStyle(document.body, 'padding-right', '0px');
     } else {
@@ -138,11 +129,16 @@ export class App implements OnInit {
   }
 
   getMenus() {
-    return this.data.menus.filter((m: any) => !m.disabled);
+    return this.app.data.menus.filter((m: any) => !m.disabled);
+  }
+
+  getMenus2() {
+    return this.app.data.menus2.filter((m: any) => !m.disabled);
   }
 
   onMontreClick(montre: any) {
-    this.clickMenu('watch', montre);
+    console.log('ok', montre);
+    this.app.clickMenu('watch', montre);
   }
 
   isDevMode() {
@@ -163,37 +159,11 @@ export class App implements OnInit {
     localStorage.setItem('theme', newTheme);
   }
 
-  clickMenu(menu: string, montre: any = undefined, search: boolean = false) {
-    if (menu == this.menuClicked) return;
-    this.forceSearch = search;
-    if (montre != undefined) {
-      this.montreClicked = montre;
-      this.indexImg = 0;
-    }
-    this.mobilemenuvisible = false;
-    if (!this.mobilemenuvisible) {
-      this.renderer.setStyle(document.body, 'overflow-y', 'auto');
-      this.renderer.setStyle(document.body, 'padding-right', '0px');
-    } else {
-      this.renderer.setStyle(document.body, 'overflow-y', 'hidden');
-      this.renderer.setStyle(document.body, 'padding-right', '8px');
-    }
-    this.showContent = false;
-    setTimeout(() => {
-      this.menuClicked = menu;
-      setTimeout(() => {
-        this.showContent = true;
-        const top = search ? Math.floor(window.innerHeight * 0.7) : 0;
-        window.scrollTo({ top: top, behavior: 'smooth' });
-      }, 100);
-    }, 500);
-  }
-
   rechercherMontres() {
     const q = this.globalsearch.trim().toLowerCase();
     if (!q) return [];
 
-    const resultats = this.montres
+    const resultats = this.app.montres
       .map((montre: any) => {
         let score = 0;
 
@@ -213,19 +183,12 @@ export class App implements OnInit {
     return resultats;
   }
 
-  getFirstInfos() {
-    return this.data.ordre.slice(0, 8);
-  }
-  getBotInfos() {
-    return this.data.ordre.slice(8, 20);
-  }
-
   async updateData() {
     const res = await fetch('data.json');
-    this.data = await res.json();
+    this.app.data = await res.json();
 
     this.http
-      .post<void>(this.link + 'sethorlogeraixois', this.data, {
+      .post<void>(this.link + 'sethorlogeraixois', this.app.data, {
         headers: { 'Content-Type': 'application/json' },
       })
       .subscribe((data: any) => {
@@ -235,7 +198,10 @@ export class App implements OnInit {
 
   getData() {
     this.http.get<any>(this.link + 'gethorlogeraixois').subscribe((data: any) => {
-      this.data = data;
+      this.app.data = data;
+      if (this.isDevMode()) {
+        this.app.data.menus2 = [{ fr: 'Ajout montre', en: 'Add watch', id: 'addwatch' }];
+      }
     });
   }
 }

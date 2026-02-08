@@ -10,6 +10,7 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Service } from '../service';
 
 @Component({
   selector: 'app-lastarrival',
@@ -18,10 +19,6 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './lastarrival.scss',
 })
 export class Lastarrival implements OnInit, AfterViewInit {
-  @Input() mobile: any = false;
-  @Input() montres: any;
-  @Input() lg: any;
-  @Input() data: any;
   @Input() title: any;
   @Input() tri: any;
   @Input() filter: any;
@@ -43,16 +40,19 @@ export class Lastarrival implements OnInit, AfterViewInit {
   selectedFilter: any;
   search = '';
 
+  constructor(public app: Service) {}
+
   ngOnInit() {
-    this.montresActuelles = this.montres;
+    this.montresActuelles = this.app.montres;
     if (this.filter) {
-      this.menus = [...new Set(this.montres.map((item: any) => item[this.lg][this.filter]))];
+      this.menus = [...new Set(this.app.montres.map((item: any) => item[this.filter]))];
       this.getMontres(0);
     }
     this.trier();
 
-    this.data.ordre.forEach((f: any) => {
-      let tmp = [...new Set(this.montresActuelles.map((item: any) => item[this.lg][f.id]))];
+    this.app.data.ordre.forEach((f: any) => {
+      console.log(this.montresActuelles);
+      let tmp = [...new Set(this.montresActuelles.map((item: any) => item[f.id]))];
       if (tmp.length > 1) {
         this.tottri.push(f);
         if (f.id != 'arrivee') this.totfiltres.push(f);
@@ -60,7 +60,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
     });
 
     this.selectedFilter = this.totfiltres.sort((a: any, b: any) => {
-      return String(a[this.lg]).localeCompare(String(b[this.lg]));
+      return String(a).localeCompare(String(b));
     })[0];
   }
 
@@ -70,7 +70,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
 
   getOrdres() {
     return this.tottri.sort((a: any, b: any) => {
-      return String(a[this.lg]).localeCompare(String(b[this.lg]));
+      return String(a).localeCompare(String(b));
     });
   }
 
@@ -78,7 +78,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
     return this.totfiltres
       .filter((o: any) => !o.selected)
       .sort((a: any, b: any) => {
-        return String(a[this.lg]).localeCompare(String(b[this.lg]));
+        return String(a).localeCompare(String(b));
       });
   }
 
@@ -112,16 +112,17 @@ export class Lastarrival implements OnInit, AfterViewInit {
   }
 
   getTri(montre: any) {
+    console.log(this.tri);
     if (this.tri == 'marque' || this.tri == 'reference' || this.tri == 'modele') return '';
     return (
-      this.data.ordre.find((o: any) => o.id == this.tri)[this.lg] +
+      this.app.data.ordre.find((o: any) => o.id == this.tri)[this.app.lg] +
       '<br/>' +
-      montre[this.lg][this.tri]
+      montre[this.tri]
     );
   }
 
   getFilterMenus(filt: any) {
-    let menus = [...new Set(this.montresActuelles.map((item: any) => item[this.lg][filt.id]))];
+    let menus = [...new Set(this.montresActuelles.map((item: any) => item[filt.id]))];
     return menus;
   }
 
@@ -141,7 +142,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
   }
 
   isDisabled(filter: any, filtermenu: any) {
-    return !this.getMontresActuelles().some((m: any) => m[this.lg][filter.id] == filtermenu);
+    return !this.getMontresActuelles().some((m: any) => m[filter.id] == filtermenu);
   }
 
   onTriChange(event: any) {
@@ -159,41 +160,43 @@ export class Lastarrival implements OnInit, AfterViewInit {
   }
 
   trier() {
-    if (this.tri) {
-      let type = this.data.ordre.find((o: any) => o.id == this.tri)!.type;
+    if (!this.tri) return;
 
-      this.montresActuelles = this.montres.sort((a: any, b: any) => {
-        const va = a[this.lg][this.tri];
-        const vb = b[this.lg][this.tri];
+    this.montresActuelles = this.app.montres.sort((a: any, b: any) => {
+      const va = a[this.tri];
+      const vb = b[this.tri];
 
-        if (type === 'text') {
-          return String(va).localeCompare(String(vb));
-        }
+      const detectType = (val: any) => {
+        if (val == null) return 'text';
+        if (!isNaN(Number(String(val).replace(/\D+/g, '')))) return 'number';
+        if (!isNaN(Date.parse(String(val)))) return 'date';
+        return 'text';
+      };
 
-        if (type === 'date') {
-          if (type === 'date') {
-            const pa = this.parseDate(va);
-            const pb = this.parseDate(vb);
-            return pa - pb;
-          }
-        }
+      const type = detectType(va);
 
-        if (type === 'number') {
+      switch (type) {
+        case 'text':
+          return String(vb).localeCompare(String(va));
+        case 'date':
+          const pa = Date.parse(String(va)) || 0;
+          const pb = Date.parse(String(vb)) || 0;
+          return pb - pa;
+        case 'number':
           const na = Number(String(va).replace(/\D+/g, '')) || 0;
           const nb = Number(String(vb).replace(/\D+/g, '')) || 0;
-          return na - nb;
-        }
-
-        return 0;
-      });
-    }
+          return nb - na;
+        default:
+          return 0;
+      }
+    });
   }
 
   nextPage(nb: number) {
     if (nb == -1) {
       if (this.scroll > 0) this.scroll = this.scroll - 1;
     } else {
-      if (this.scroll < this.montres.length - 1) this.scroll = this.scroll + 1;
+      if (this.scroll < this.app.montres.length - 1) this.scroll = this.scroll + 1;
     }
 
     let comp = this.montresContainer;
@@ -226,8 +229,8 @@ export class Lastarrival implements OnInit, AfterViewInit {
 
   getMontres(i: any) {
     this.filterClicked = i;
-    this.montresActuelles = this.montres.filter(
-      (m: any) => m[this.lg][this.filter] == this.menus[this.filterClicked]
+    this.montresActuelles = this.app.montres.filter(
+      (m: any) => m[this.filter] == this.menus[this.filterClicked],
     );
   }
 
@@ -253,8 +256,8 @@ export class Lastarrival implements OnInit, AfterViewInit {
             let score = 0;
 
             // Pour chaque propriété, on vérifie si elle contient la recherche
-            for (const key of Object.keys(montre[this.lg])) {
-              const valeur = String((montre as any)[this.lg][key]).toLowerCase();
+            for (const key of Object.keys(montre)) {
+              const valeur = String((montre as any)[key]).toLowerCase();
               if (valeur.includes(q)) {
                 score++;
               }
@@ -271,7 +274,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
             let filters = this.getFilterMenus(f);
             for (let i = 0; i < filters.length; i++) {
               if (!f.excluded.includes(i)) {
-                montres = montres.filter((m: any) => m[this.lg][f.id] != filters[i]);
+                montres = montres.filter((m: any) => m[f.id] != filters[i]);
               }
             }
           }

@@ -1,0 +1,18 @@
+<div class="page contact" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div class="forms bloc">
+    <div class="form" *ngFor="let form of app.data.contact" [class.full]="form.type == 'textarea'">
+      <p>{{ form[app.lg] }} :</p>
+      <input
+        type="text"
+        *ngIf="form.type == 'text'"
+        placeholder="{{ form.placeholder }}.."
+        [(ngModel)]="form.model"
+      />
+      <textarea
+        *ngIf="form.type == 'textarea'"
+        placeholder="{{ form.placeholder }}.."
+        [(ngModel)]="form.model"
+      ></textarea>
+    </div>
+  </div>
+</div>

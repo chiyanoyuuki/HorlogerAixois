@@ -1,0 +1,8 @@
+<div class="page horology" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div class="pres bloc">
+    <p class="title">{{ app.data[app.lg].discover_horology | uppercase }}</p>
+    <p>{{ app.data[app.lg].horology }}</p>
+  </div>
+
+  <app-movementscomplic> </app-movementscomplic>
+</div>

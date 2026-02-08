@@ -1,0 +1,10 @@
+<div class="page about" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div
+    *ngFor="let bloc of app.data.about; let i = index"
+    class="bloc"
+    [class.graybloc]="i % 2 != 0"
+  >
+    <p *ngIf="bloc.title" class="title" [innerHTML]="bloc.title"></p>
+    <p *ngFor="let texte of bloc.textes" [innerHTML]="texte"></p>
+  </div>
+</div>

@@ -1,0 +1,53 @@
+<div class="page watch" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div class="toptitle">
+    <p>{{ montreClicked.brand | uppercase }}</p>
+    <p>{{ montreClicked.movementType }}</p>
+    <p>{{ montreClicked.otherData.reference }}</p>
+  </div>
+  <div class="topinfos graybloc">
+    <div class="left">
+      <div class="bigpicture">
+        <img
+          src="{{ app.link }}watches/{{ montreClicked.id }}/{{ image }}"
+          *ngFor="let image of montreClicked.otherData.images; let i = index"
+          [style.left]="'calc(calc(100% * ' + i + ') - calc(100% * ' + indexImg + '))'"
+        />
+      </div>
+      <div class="smallpictures">
+        <p
+          class="clickable"
+          (click)="indexImg = indexImg > 0 ? indexImg - 1 : montreClicked.img.length - 1"
+        >
+          <
+        </p>
+        <img
+          class="clickable"
+          (click)="indexImg = i"
+          *ngFor="let image of montreClicked.otherData.images; let i = index"
+          src="{{ app.link }}watches/{{ montreClicked.id }}/{{ image }}"
+        />
+        <p
+          class="clickable"
+          (click)="indexImg = (indexImg + 1) % montreClicked.otherData.images.length"
+        >
+          >
+        </p>
+      </div>
+    </div>
+    <div class="right">
+      <div *ngFor="let info of getFirstInfos()" class="info">
+        <p>{{ info[app.lg] }} :</p>
+        <p>{{ montreClicked[info['id']] }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottominfos">
+    <div *ngFor="let info of getBotInfos()" class="info">
+      <p>{{ info[app.lg] }}</p>
+      <p>{{ montreClicked[info['id']] }}</p>
+    </div>
+  </div>
+
+  <app-lastarrival [title]="'similar'" (montreClick)="onMontreClick($event)"> </app-lastarrival>
+</div>

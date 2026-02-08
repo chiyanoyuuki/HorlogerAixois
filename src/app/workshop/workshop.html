@@ -1,0 +1,20 @@
+<div class="page workshop" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div class="bloctexte">
+    <p *ngFor="let texte of app.data.workshop[app.lg]" [innerHTML]="texte"></p>
+  </div>
+  <img class="bigimg" src="workshop/{{ app.data.workshop.bigimg }}" />
+
+  <div class="outils">
+    <div class="outil" *ngFor="let outil of app.data.workshop.outils">
+      <div class="carousel">
+        <div class="track" [style.transform]="'translateX(' + -getIndex(outil) * 100 + '%)'">
+          <img *ngFor="let img of outil.img" [src]="'workshop/outils/' + outil.nom + '/' + img" />
+        </div>
+      </div>
+
+      <p>{{ outil[app.lg] }}</p>
+    </div>
+  </div>
+
+  <app-movementscomplic [polish]="true"> </app-movementscomplic>
+</div>

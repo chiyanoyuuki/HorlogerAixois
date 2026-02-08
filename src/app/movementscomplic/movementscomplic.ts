@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Service } from '../service';
 
 @Component({
   selector: 'app-movementscomplic',
@@ -9,8 +10,9 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './movementscomplic.scss',
 })
 export class Movementscomplic {
-  @Input() montres:any;
-  @Input() lg:any;
-  @Input() data:any;
-  @Input() polish:any = false;
+  @Input() montres: any;
+  @Input() lg: any;
+  @Input() data: any;
+  @Input() polish: any = false;
+  constructor(public app: Service) {}
 }

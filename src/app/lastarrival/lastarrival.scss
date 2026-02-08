@@ -36,6 +36,9 @@
         img {
           margin: auto;
           display: flex;
+          width: 90%;
+          height: 300px;
+          object-fit: cover;
         }
         p {
           text-align: center;
@@ -195,9 +198,9 @@
         .montre {
           width: 40% !important;
           img {
-            width: 100%;
+            width: 90%;
             height: 25vh;
-            object-fit: contain;
+            object-fit: cover;
           }
         }
       }

@@ -1,13 +1,13 @@
 <div
-  *ngIf="data"
+  *ngIf="app.data"
   [class.paysage]="paysage"
   [class.portrait]="!paysage"
   [class.scrolled]="isScrolled"
-  [class.mobile]="mobile"
+  [class.mobile]="app.mobile"
 >
-  <div class="mobilemenu" [class.visible]="mobilemenuvisible">
+  <div class="mobilemenu" [class.visible]="app.mobilemenuvisible">
     <div *ngFor="let menu of getMenus()">
-      <p class="clickable" (click)="clickMenu(menu['id'])">{{ menu[lg] | uppercase }}</p>
+      <p class="clickable" (click)="clickMenu(menu['id'])">{{ menu[app.lg] | uppercase }}</p>
       <div class="line"></div>
     </div>
   </div>
@@ -17,8 +17,8 @@
       <img class="menu clickable" src="menu.png" (click)="clickMobileMenu()" />
       <img
         class="drapeau clickable"
-        (click)="lg == 'fr' ? (lg = 'en') : (lg = 'fr')"
-        src="{{ lg }}.png"
+        (click)="app.lg == 'fr' ? (app.lg = 'en') : (app.lg = 'fr')"
+        src="{{ app.lg }}.png"
       />
       <img class="moon clickable" src="moon.png" (click)="toggleDarkMode()" />
       <img
@@ -37,7 +37,17 @@
         class="clickable"
         (click)="clickMenu(menu['id'])"
         [class.clicked]="menuClicked == menu['id']"
-        [innerHTML]="menu[lg] | uppercase"
+        [innerHTML]="menu[app.lg] | uppercase"
+      ></p>
+    </div>
+
+    <div class="menus">
+      <p
+        *ngFor="let menu of getMenus2()"
+        class="clickable"
+        (click)="clickMenu(menu['id'])"
+        [class.clicked]="menuClicked == menu['id']"
+        [innerHTML]="menu[app.lg] | uppercase"
       ></p>
     </div>
   </div>
@@ -50,390 +60,13 @@
     Save Data
   </button>
 
-  <div class="page home" *ngIf="menuClicked == 'home'" [class.showContent]="showContent">
-    <video id="video" class="video" loop autoplay [muted]="'muted'">
-      <source src="homevideo.mp4" type="video/mp4" />
-    </video>
-
-    <div class="bloctexte graybloc">
-      <p>{{ data[lg].home }}</p>
-    </div>
-
-    <app-lastarrival
-      [mobile]="mobile"
-      [montres]="montres"
-      [lg]="lg"
-      [data]="data"
-      [title]="'lastarrival'"
-      [tri]="'arrivee'"
-      (montreClick)="onMontreClick($event)"
-    >
-    </app-lastarrival>
-
-    <div class="doubleblocs graybloc">
-      <div class="bloc">
-        <p class="title">{{ data[lg].revisions | uppercase }}</p>
-        <p>{{ data[lg].revisions_txt }}</p>
-        <div class="carousel">
-          <div
-            class="carousel-inner"
-            [style.transform]="'translateX(-' + (image % data.blocs.revisions.length) * 100 + '%)'"
-          >
-            <img *ngFor="let img of data.blocs.revisions" [src]="'blocs/revisions/' + img" />
-          </div>
-        </div>
-      </div>
-      <div class="bloc">
-        <p class="title">{{ data[lg].polishing | uppercase }}</p>
-        <p>{{ data[lg].polishing_txt }}</p>
-        <div class="carousel">
-          <div
-            class="carousel-inner"
-            [style.transform]="'translateX(-' + (image % data.blocs.polishing.length) * 100 + '%)'"
-          >
-            <img *ngFor="let img of data.blocs.polishing" [src]="'blocs/polishing/' + img" />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <app-lastarrival
-      [mobile]="mobile"
-      [montres]="montres"
-      [tri]="'arrivee'"
-      [filter]="'movement'"
-      [lg]="lg"
-      [data]="data"
-      [title]="'movements'"
-      (montreClick)="onMontreClick($event)"
-    >
-    </app-lastarrival>
-
-    <div class="doubleblocs graybloc">
-      <div class="bloc">
-        <p class="title">{{ data[lg].piles | uppercase }}</p>
-        <p>{{ data[lg].piles_txt }}</p>
-        <div class="carousel">
-          <div
-            class="carousel-inner"
-            [style.transform]="'translateX(-' + (image % data.blocs.piles.length) * 100 + '%)'"
-          >
-            <img *ngFor="let img of data.blocs.piles" [src]="'blocs/piles/' + img" />
-          </div>
-        </div>
-      </div>
-      <div class="bloc">
-        <p class="title">{{ data[lg].bracelets | uppercase }}</p>
-        <p>{{ data[lg].bracelets_txt }}</p>
-        <div class="carousel">
-          <div
-            class="carousel-inner"
-            [style.transform]="'translateX(-' + (image % data.blocs.bracelets.length) * 100 + '%)'"
-          >
-            <img *ngFor="let img of data.blocs.bracelets" [src]="'blocs/bracelets/' + img" />
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="page shop" *ngIf="menuClicked == 'shop'" [class.showContent]="showContent">
-    <div class="bloctexte">
-      <p>{{ data[lg].shop }}</p>
-    </div>
-    <video id="video" class="video" loop autoplay [muted]="'muted'">
-      <source src="homevideo.mp4" type="video/mp4" />
-    </video>
-
-    <div class="images">
-      <img
-        src="shop/{{ img }}"
-        *ngFor="let img of data.shop; let i = index"
-        [class.alone]="i % 2 == 0 && data.shop.length == i + 1"
-      />
-    </div>
-  </div>
-
-  <div class="page workshop" *ngIf="menuClicked == 'workshop'" [class.showContent]="showContent">
-    <div class="bloctexte">
-      <p>{{ data[lg].workshop }}</p>
-    </div>
-    <img src="bigimg" src="workshop/{{ data.workshop.bigimg }}" />
-    <div class="outils">
-      <div class="outil" *ngFor="let outil of data.workshop.outils">
-        <img src="workshop/outils/{{ outil.img }}" />
-        <p>{{ outil[lg] }}</p>
-      </div>
-    </div>
-
-    <app-movementscomplic [montres]="montres" [lg]="lg" [data]="data" [polish]="true">
-    </app-movementscomplic>
-  </div>
-
-  <div class="page horology" *ngIf="menuClicked == 'horo'" [class.showContent]="showContent">
-    <div class="pres bloc">
-      <p class="title">{{ data[lg].discover_horology | uppercase }}</p>
-      <p>{{ data[lg].horology }}</p>
-    </div>
-
-    <app-movementscomplic [montres]="montres" [lg]="lg" [data]="data"> </app-movementscomplic>
-  </div>
-
-  <div class="page watches" *ngIf="menuClicked == 'watches'" [class.showContent]="showContent">
-    <app-lastarrival
-      [mobile]="mobile"
-      [montres]="montres"
-      [lg]="lg"
-      [tri]="'arrivee'"
-      [data]="data"
-      [title]="'lastarrival'"
-      (montreClick)="onMontreClick($event)"
-    >
-    </app-lastarrival>
-
-    <app-lastarrival
-      [mobile]="mobile"
-      [montres]="montres"
-      [lg]="lg"
-      [tri]="'arrivee'"
-      [data]="data"
-      [title]="'watches'"
-      [catalog]="true"
-      [forceSearch]="forceSearch"
-      (montreClick)="onMontreClick($event)"
-    >
-    </app-lastarrival>
-  </div>
-
-  <div class="page watch" *ngIf="menuClicked == 'watch'" [class.showContent]="showContent">
-    <div class="toptitle">
-      <p>{{ montreClicked[lg].marque | uppercase }}</p>
-      <p>{{ montreClicked[lg].movement }}</p>
-      <p>{{ montreClicked[lg].reference }}</p>
-    </div>
-    <div class="topinfos graybloc">
-      <div class="left">
-        <div class="bigpicture">
-          <img
-            src="./montres/{{ image }}"
-            *ngFor="let image of montreClicked[lg].img; let i = index"
-            [style.left]="'calc(calc(100% * ' + i + ') - calc(100% * ' + indexImg + '))'"
-          />
-        </div>
-        <div class="smallpictures">
-          <p
-            class="clickable"
-            (click)="indexImg = indexImg > 0 ? indexImg - 1 : montreClicked[lg].img.length - 1"
-          >
-            <
-          </p>
-          <img
-            class="clickable"
-            (click)="indexImg = i"
-            *ngFor="let image of montreClicked[lg].img; let i = index"
-            src="./montres/{{ image }}"
-          />
-          <p class="clickable" (click)="indexImg = (indexImg + 1) % montreClicked[lg].img.length">
-            >
-          </p>
-        </div>
-      </div>
-      <div class="right">
-        <div *ngFor="let info of getFirstInfos()" class="info">
-          <p>{{ info[lg] }} :</p>
-          <p>{{ montreClicked[lg][info['id']] }}</p>
-        </div>
-      </div>
-    </div>
-
-    <div class="bottominfos">
-      <div *ngFor="let info of getBotInfos()" class="info">
-        <p>{{ info[lg] }}</p>
-        <p>{{ montreClicked[lg][info['id']] }}</p>
-      </div>
-    </div>
-
-    <app-lastarrival
-      [mobile]="mobile"
-      [montres]="montres"
-      [lg]="lg"
-      [data]="data"
-      [title]="'similar'"
-      (montreClick)="onMontreClick($event)"
-    >
-    </app-lastarrival>
-  </div>
-
-  <div
-    class="page legal"
-    *ngIf="menuClicked == 'legal' && lg == 'fr'"
-    [class.showContent]="showContent"
-  >
-    <h1>Mentions légales</h1>
-
-    <p class="muted">Dernière mise à jour : 10/11/2025</p>
-
-    <div class="section">
-      <h2>Éditeur du site</h2>
-      <p><strong>Nom de la société :</strong> Horloger Aixois</p>
-      <p><strong>Forme juridique : Société par actions simplifiée</strong></p>
-      <p><strong>RCS / SIREN / SIRET : 944985266</strong></p>
-      <p><strong>Adresse du siège :</strong> 18 Rue de la Glacière, 13100 Aix-en-Provence</p>
-      <p><strong>Directeur de la publication : Julien LAMBAY</strong></p>
-    </div>
-
-    <div class="section">
-      <h2>Hébergement</h2>
-      <p><strong>Hébergeur :</strong> O2Switch</p>
-      <p><strong>Adresse de l'hébergeur :</strong> CHE DES PARDIAUX 63000 CLERMONT FERRAND</p>
-    </div>
-
-    <div class="section">
-      <h2>Contact</h2>
-      <p><strong>Adresse e-mail :</strong> <a href="mailto:"></a></p>
-      <p><strong>Téléphone :</strong> 09 62 11 86 37</p>
-    </div>
-
-    <div class="section">
-      <h2>Propriété intellectuelle</h2>
-      <p>
-        Tous les contenus présents sur ce site (textes, images, photographies, vidéos, logos,
-        icônes, etc.) sont la propriété exclusive de Horloger Aixois ou de leurs titulaires
-        respectifs et sont protégés par le droit de la propriété intellectuelle. Toute reproduction,
-        représentation, modification, publication, adaptation de tout ou partie des éléments du
-        site, quel que soit le moyen ou le procédé utilisé, est interdite sauf autorisation écrite
-        préalable de Horloger Aixois.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Responsabilité</h2>
-      <p>
-        Les informations publiées sur ce site sont fournies à titre indicatif. L'éditeur s'efforce
-        d'assurer l'exactitude des informations, mais ne peut garantir l'exhaustivité ni l'absence
-        d'erreurs. L'éditeur ne peut être tenu responsable des dommages directs ou indirects
-        résultant de l'accès ou de l'utilisation du site.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Données personnelles</h2>
-      <p>Ce site ne collecte pas de données personnelles.</p>
-      <p>
-        Si des données sont collectées (formulaire de contact, newsletter, etc.), elles sont
-        traitées conformément à la réglementation applicable (RGPD). Pour toute demande relative aux
-        données personnelles, contactez : <a href="mailto:"></a>.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Liens vers d'autres sites</h2>
-      <p>
-        Le site peut contenir des liens vers des sites externes. L'éditeur n'exerce aucun contrôle
-        sur ces sites et décline toute responsabilité quant à leur contenu ou leur politique de
-        confidentialité.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Réclamations et contact légal</h2>
-      <p>
-        Toute réclamation ou demande d'information doit être adressée à : <a href="mailto:"></a> ou
-        par voie postale à l'adresse du siège.
-      </p>
-    </div>
-  </div>
-
-  <div
-    class="page legal"
-    *ngIf="menuClicked == 'legal' && lg == 'en'"
-    [class.showContent]="showContent"
-  >
-    <h1>Legal Notice</h1>
-
-    <p class="muted">Last update: 11/10/2025</p>
-
-    <div class="section">
-      <h2>Publisher</h2>
-      <p><strong>Company name:</strong> Horloger Aixois</p>
-      <p><strong>Legal form: Simplified Joint-Stock Company</strong></p>
-      <p><strong>RCS / SIREN / SIRET: 944985266</strong></p>
-      <p>
-        <strong>Registered office:</strong> 18 Rue de la Glacière, 13100 Aix-en-Provence, France
-      </p>
-      <p><strong>Publishing director: Julien LAMBAY</strong></p>
-
-      <p><strong>Nom de la société :</strong> Horloger Aixois</p>
-      <p><strong>Forme juridique : Société par actions simplifiée</strong></p>
-      <p><strong>RCS / SIREN / SIRET : 944985266</strong></p>
-      <p><strong>Adresse du siège :</strong> 18 Rue de la Glacière, 13100 Aix-en-Provence</p>
-    </div>
-
-    <div class="section">
-      <h2>Hosting</h2>
-      <p><strong>Hosting provider:</strong> O2Switch</p>
-      <p><strong>Provider address:</strong> CHE DES PARDIAUX 63000 CLERMONT-FERRAND, France</p>
-    </div>
-
-    <div class="section">
-      <h2>Contact</h2>
-      <p><strong>Email address:</strong> <a href="mailto:"></a></p>
-      <p><strong>Phone:</strong> +33 9 62 11 86 37</p>
-    </div>
-
-    <div class="section">
-      <h2>Intellectual Property</h2>
-      <p>
-        All content on this website (texts, images, photographs, videos, logos, icons, etc.) is the
-        exclusive property of Horloger Aixois or their respective owners and is protected by
-        intellectual property law. Any reproduction, representation, modification, publication, or
-        adaptation of any part of the website, by any means, is prohibited without prior written
-        authorization from Horloger Aixois.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Liability</h2>
-      <p>
-        The information provided on this website is for reference only. The publisher strives to
-        ensure accuracy but cannot guarantee completeness or the absence of errors. The publisher
-        cannot be held liable for direct or indirect damages resulting from access to or use of the
-        website.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Personal Data</h2>
-      <p>This website does not collect personal data.</p>
-      <p>
-        If personal data is collected (contact form, newsletter, etc.), it is processed in
-        accordance with applicable regulations. Any request regarding personal data may be addressed
-        to: <a href="mailto:"></a>.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Links to Other Websites</h2>
-      <p>
-        This website may contain links to external websites. The publisher has no control over these
-        external websites and declines any responsibility for their content or privacy policy.
-      </p>
-    </div>
-
-    <div class="section">
-      <h2>Complaints and Legal Contact</h2>
-      <p>
-        Any complaint or request for legal information must be addressed to:
-        <a href="mailto:"></a> or by postal mail to the registered office.
-      </p>
-    </div>
-  </div>
+  <router-outlet></router-outlet>
 
   <div class="footer">
     <div class="mentionsconf">
-      <p class="clickable" (click)="clickMenu('legal')">{{ data[lg].legalmentions }}</p>
+      <p class="clickable" (click)="clickMenu('legal')">{{ app.data[app.lg].legalmentions }}</p>
     </div>
     <div class="line"></div>
-    <p class="rightsreserved">@{{ currentYear }} {{ data[lg].rightsreserved }}</p>
+    <p class="rightsreserved">@{{ currentYear }} {{ app.data[app.lg].rightsreserved }}</p>
   </div>
 </div>

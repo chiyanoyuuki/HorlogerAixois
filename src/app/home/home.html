@@ -1,0 +1,85 @@
+<div class="page home" *ngIf="app.data" [class.showContent]="app.showContent">
+  <video id="video" class="video" loop autoplay [muted]="'muted'">
+    <source src="homevideo.mp4" type="video/mp4" />
+  </video>
+
+  <div class="bloctexte graybloc">
+    <p
+      *ngFor="let texte of app.data.home[app.lg]; let i = index"
+      [innerHTML]="texte.text ? texte.text : texte.title"
+      [class.title]="i == 0"
+      [class.smalltitle]="texte.title"
+    ></p>
+  </div>
+
+  <app-lastarrival [title]="'lastarrival'" [tri]="'arrivee'" (montreClick)="onMontreClick($event)">
+  </app-lastarrival>
+
+  <div class="doubleblocs graybloc">
+    <div class="bloc">
+      <p class="title">{{ app.data[app.lg].revisions | uppercase }}</p>
+      <p>{{ app.data[app.lg].revisions_txt }}</p>
+      <div class="carousel">
+        <div
+          class="carousel-inner"
+          [style.transform]="
+            'translateX(-' + (image % app.data.blocs.revisions.length) * 100 + '%)'
+          "
+        >
+          <img *ngFor="let img of app.data.blocs.revisions" [src]="'blocs/revisions/' + img" />
+        </div>
+      </div>
+    </div>
+    <div class="bloc">
+      <p class="title">{{ app.data[app.lg].polishing | uppercase }}</p>
+      <p>{{ app.data[app.lg].polishing_txt }}</p>
+      <div class="carousel">
+        <div
+          class="carousel-inner"
+          [style.transform]="
+            'translateX(-' + (image % app.data.blocs.polishing.length) * 100 + '%)'
+          "
+        >
+          <img *ngFor="let img of app.data.blocs.polishing" [src]="'blocs/polishing/' + img" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <app-lastarrival
+    [tri]="'arrivee'"
+    [filter]="'movement'"
+    [title]="'movements'"
+    (montreClick)="onMontreClick($event)"
+  >
+  </app-lastarrival>
+
+  <div class="doubleblocs graybloc">
+    <div class="bloc">
+      <p class="title">{{ app.data[app.lg].piles | uppercase }}</p>
+      <p>{{ app.data[app.lg].piles_txt }}</p>
+      <div class="carousel">
+        <div
+          class="carousel-inner"
+          [style.transform]="'translateX(-' + (image % app.data.blocs.piles.length) * 100 + '%)'"
+        >
+          <img *ngFor="let img of app.data.blocs.piles" [src]="'blocs/piles/' + img" />
+        </div>
+      </div>
+    </div>
+    <div class="bloc">
+      <p class="title">{{ app.data[app.lg].bracelets | uppercase }}</p>
+      <p>{{ app.data[app.lg].bracelets_txt }}</p>
+      <div class="carousel">
+        <div
+          class="carousel-inner"
+          [style.transform]="
+            'translateX(-' + (image % app.data.blocs.bracelets.length) * 100 + '%)'
+          "
+        >
+          <img *ngFor="let img of app.data.blocs.bracelets" [src]="'blocs/bracelets/' + img" />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

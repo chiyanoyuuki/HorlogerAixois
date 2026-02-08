@@ -1,0 +1,15 @@
+<div class="page shop" *ngIf="app.data" [class.showContent]="app.showContent">
+  <div class="bloctexte">
+    <p *ngFor="let texte of app.data.shop[app.lg]" [innerHTML]="texte"></p>
+  </div>
+
+  <img class="bigimg" src="{{ app.data.shop.bigimg }}" />
+
+  <div class="images">
+    <img
+      src="shop/{{ img }}"
+      *ngFor="let img of app.data.shop.images; let i = index"
+      [class.alone]="i % 2 == 0 && app.data.shop.length == i + 1"
+    />
+  </div>
+</div>
