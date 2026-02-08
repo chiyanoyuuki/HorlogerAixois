@@ -44,6 +44,7 @@ export class Lastarrival implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.montresActuelles = this.app.montres;
+    console.log('montresActuelles', this.montresActuelles);
     if (this.filter) {
       this.menus = [...new Set(this.app.montres.map((item: any) => item[this.filter]))];
       this.getMontres(0);

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 export class Service {
   data: any;
   lg = 'fr';
-  montres: any = [];
+  montres: any;
   mobile = false;
   montreClicked: any;
   showContent = true;

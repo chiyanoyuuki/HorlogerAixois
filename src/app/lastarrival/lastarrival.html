@@ -95,9 +95,9 @@
             src="{{ app.link }}watches/{{ montre.id }}/{{ montre.otherData.images[0] }}"
             alt="imgMontre"
           />
-          <p [innerHTML]="highlight(montre.reference)"></p>
-          <p [innerHTML]="highlight(montre.marque)"></p>
-          <p [innerHTML]="highlight(montre.modele)"></p>
+          <p [innerHTML]="highlight(montre.otherData.reference)"></p>
+          <p [innerHTML]="highlight(montre.brand)"></p>
+          <p [innerHTML]="highlight(montre.model)"></p>
           <p [innerHTML]="highlight(getTri(montre))" *ngIf="catalog"></p>
         </div>
       </div>
