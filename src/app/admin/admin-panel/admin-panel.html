@@ -46,15 +46,15 @@
             </label>
           </div>
 
-          <div class="images-field" *ngIf="!editingWatch">
-            <span class="node-label">Photos de la montre</span>
+          <div class="images-field">
+            <span class="node-label">{{ editingWatch ? 'Ajouter des photos' : 'Photos de la montre' }}</span>
             <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)" />
             <div class="previews" *ngIf="imagePreviews.length">
               <img *ngFor="let src of imagePreviews" [src]="src" alt="aperçu" />
             </div>
           </div>
           <p class="edit-note" *ngIf="editingWatch">
-            La modification et la suppression nécessitent le support backend (voir ADMIN.md).
+            Les photos existantes sont conservées ; celles ajoutées ici viennent à la suite.
           </p>
 
           <div class="form-actions">

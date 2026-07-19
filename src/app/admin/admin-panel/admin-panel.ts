@@ -134,7 +134,7 @@ export class AdminPanel {
     this.submitting = true;
     let ok = false;
     if (this.editingWatch) {
-      ok = await this.admin.updateWatch(this.editingWatch.id, fields);
+      ok = await this.admin.updateWatch(this.editingWatch, fields, this.newImages);
     } else {
       ok = await this.admin.addWatch(fields, this.newImages);
     }

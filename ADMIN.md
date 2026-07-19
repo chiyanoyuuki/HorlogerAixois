@@ -62,35 +62,31 @@ Onglet **Montres** :
 
 - **Ajouter** : remplir les caractéristiques, joindre des photos, puis
   « Ajouter la montre ». Les images sont compressées côté navigateur puis
-  envoyées à `montreshorloger.php` (comme le flux d'import existant).
-- **Modifier / Supprimer** : boutons présents sur chaque montre de la liste.
+  envoyées à `montreshorloger.php`.
+- **Modifier** : bouton « Modifier » sur chaque montre → le formulaire se
+  pré-remplit. On peut ajouter des photos (elles s'ajoutent à la suite des
+  existantes). Les images déjà en ligne sont conservées.
+- **Supprimer** : bouton « Supprimer » → retire la montre et son dossier
+  d'images.
 
-> L'**ajout** fonctionne avec le backend actuel. La **modification** et la
-> **suppression** nécessitent le support serveur décrit ci-dessous.
+## 5. Backend des montres
 
-## 5. Contrat backend à compléter (édition / suppression de montres)
+Le fichier **`backend/montreshorloger.php`** (fourni dans le dépôt) prend en
+charge l'ensemble des opérations :
 
-Le front envoie déjà les requêtes ; il reste à les traiter côté PHP dans
-`montreshorloger.php` :
+| Opération   | Requête                                                       |
+| ----------- | ------------------------------------------------------------- |
+| Liste       | `GET montreshorloger.php` (ou `?id=` pour une seule)          |
+| Ajout       | `POST` sans `id` (+ `images[]`)                               |
+| Modification| `POST` avec `id` (otherData renvoyé pour préserver les images)|
+| Suppression | `POST` avec `action=delete` + `id`                            |
 
-**Supprimer** — `POST montreshorloger.php` (multipart) :
+> **À déployer** : remplacer le `montreshorloger.php` du serveur par celui de
+> `backend/`. Il est rétro-compatible (ajout/édition inchangés) et ajoute la
+> suppression + la conservation des images en édition.
 
-```
-action=delete
-id=<id de la montre>
-```
-
-**Modifier** — `POST montreshorloger.php` (multipart) :
-
-```
-action=update
-id=<id de la montre>
-<champ>=<valeur>   (brand, model, price, …)
-```
-
-Tant que ces actions ne sont pas gérées, l'ajout reste pleinement
-fonctionnel et les boutons Modifier/Suppression afficheront un message
-d'erreur clair.
+Les écritures ne sont pas protégées côté serveur : prévoir une auth avant la
+mise en production (cf. §2).
 
 ## 6. Où se trouve le code
 

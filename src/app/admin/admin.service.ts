@@ -32,6 +32,15 @@ export class Admin {
 
   link = 'http' + (isDevMode() ? '' : 's') + '://chiyanh.cluster031.hosting.ovh.net/';
 
+  /** Colonnes SQL de la table `horlogermontres` (le reste va dans otherData). */
+  private readonly COLUMNS = [
+    'brand', 'model', 'year', 'movementType', 'caliber',
+    'powerReserve', 'frequency', 'waterResistance',
+    'case', 'caseBack', 'glass', 'dial',
+    'lugWidth', 'buckle', 'size', 'crown',
+    'bezel', 'indexes', 'wristSize', 'buckleWidth',
+  ];
+
   constructor(
     private http: HttpClient,
     public app: Service,
@@ -121,8 +130,8 @@ export class Admin {
   }
 
   /**
-   * Supprime une montre. Nécessite que le backend accepte une requête POST
-   * avec `action=delete` + `id` sur `montreshorloger.php` (voir ADMIN.md).
+   * Supprime une montre (POST `action=delete` + `id`). Nécessite le backend
+   * `backend/montreshorloger.php` fourni (voir ADMIN.md).
    */
   deleteWatch(id: string | number): Promise<boolean> {
     const formData = new FormData();
@@ -136,7 +145,7 @@ export class Admin {
           resolve(true);
         },
         error: () => {
-          this.flash('Suppression impossible (support backend requis).', true);
+          this.flash('Suppression impossible.', true);
           resolve(false);
         },
       });
@@ -144,14 +153,38 @@ export class Admin {
   }
 
   /**
-   * Met à jour les caractéristiques d'une montre existante. Nécessite le
-   * support backend `action=update` + `id` (voir ADMIN.md).
+   * Met à jour une montre existante. Le backend actuel traite un POST avec
+   * `id` comme un UPDATE. On préserve `otherData` (dont les images) en le
+   * renvoyant fusionné avec les champs édités.
    */
-  updateWatch(id: string | number, fields: Record<string, any>): Promise<boolean> {
+  async updateWatch(
+    watch: any,
+    fields: Record<string, any>,
+    images: File[] = [],
+  ): Promise<boolean> {
     const formData = new FormData();
-    formData.append('action', 'update');
-    formData.append('id', String(id));
-    Object.keys(fields).forEach((k) => formData.append(k, fields[k] ?? ''));
+    formData.append('id', String(watch.id));
+
+    // Colonnes : valeur éditée sinon valeur d'origine.
+    for (const col of this.COLUMNS) {
+      const v = fields[col] !== undefined ? fields[col] : watch[col];
+      formData.append(col, v ?? '');
+    }
+
+    // otherData : on repart de l'existant (images…) puis on applique les
+    // champs édités qui ne sont pas des colonnes.
+    const otherData: Record<string, any> = { ...(watch.otherData ?? {}) };
+    for (const key of Object.keys(fields)) {
+      if (!this.COLUMNS.includes(key)) otherData[key] = fields[key];
+    }
+    formData.append('otherData', JSON.stringify(otherData));
+
+    // Photos supplémentaires éventuelles (ajoutées à la suite côté serveur).
+    for (const file of images) {
+      const compressed = await this.compressImage(file, 1);
+      formData.append('images[]', compressed);
+    }
+
     return new Promise((resolve) => {
       this.http.post(this.link + 'montreshorloger.php', formData).subscribe({
         next: () => {
@@ -160,7 +193,7 @@ export class Admin {
           resolve(true);
         },
         error: () => {
-          this.flash('Mise à jour impossible (support backend requis).', true);
+          this.flash('Mise à jour impossible.', true);
           resolve(false);
         },
       });
