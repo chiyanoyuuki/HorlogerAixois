@@ -21,7 +21,6 @@ export class App implements OnInit {
 
   montreClicked: any;
   currentYear: any;
-  movements: any = [];
 
   lastArrivalPage = 0;
   portraittreshold = 800;
@@ -67,20 +66,7 @@ export class App implements OnInit {
 
     this.app.getWatches();
 
-    const uniqueMovementsMap = new Map<string, { fr: string; en: string }>();
-
-    this.app.montres.forEach((m: any) => {
-      const fr = m.fr.movement;
-      const en = m.en.movement;
-
-      // utiliser la valeur française comme clé pour l'unicité
-      if (!uniqueMovementsMap.has(fr)) {
-        uniqueMovementsMap.set(fr, { fr, en });
-      }
-    });
-
-    this.movements = Array.from(uniqueMovementsMap.values());
-
+    this.checkDimensions();
     let int = setInterval(() => {
       this.checkDimensions();
       clearInterval(int);

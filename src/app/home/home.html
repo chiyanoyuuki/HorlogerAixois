@@ -12,9 +12,6 @@
     ></p>
   </div>
 
-  <app-lastarrival [title]="'lastarrival'" [tri]="'arrivee'" (montreClick)="onMontreClick($event)">
-  </app-lastarrival>
-
   <div class="doubleblocs graybloc">
     <div class="bloc">
       <p class="title">{{ app.data[app.lg].revisions | uppercase }}</p>
@@ -47,9 +44,8 @@
   </div>
 
   <app-lastarrival
-    [tri]="'arrivee'"
-    [filter]="'movement'"
-    [title]="'movements'"
+    [title]="'lastarrival'"
+    [tri]="'created_at'"
     (montreClick)="onMontreClick($event)"
   >
   </app-lastarrival>

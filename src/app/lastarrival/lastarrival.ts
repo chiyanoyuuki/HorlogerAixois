@@ -24,6 +24,8 @@ export class Lastarrival implements OnInit, AfterViewInit {
   @Input() filter: any;
   @Input() catalog = false;
   @Input() forceSearch = false;
+  /** Liste de montres imposée (ex. modèles similaires déjà triés). */
+  @Input() list: any = null;
 
   @Output() montreClick = new EventEmitter<any>();
 
@@ -43,8 +45,8 @@ export class Lastarrival implements OnInit, AfterViewInit {
   constructor(public app: Service) {}
 
   ngOnInit() {
-    this.montresActuelles = this.app.montres;
-    console.log('montresActuelles', this.montresActuelles);
+    // Liste imposée (modèles similaires déjà ordonnés) ou toutes les montres.
+    this.montresActuelles = this.list ?? this.app.montres;
     if (this.filter) {
       this.menus = [...new Set(this.app.montres.map((item: any) => item[this.filter]))];
       this.getMontres(0);

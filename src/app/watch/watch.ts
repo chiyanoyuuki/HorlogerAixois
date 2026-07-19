@@ -15,6 +15,7 @@ export class Watch implements OnInit {
   indexImg = 0;
   montreClicked: any;
   lightboxOpen = false;
+  similar: any[] = [];
 
   constructor(
     public app: Service,
@@ -27,16 +28,45 @@ export class Watch implements OnInit {
       if (!id) return;
       this.indexImg = 0;
 
-      // 1. si déjà en mémoire dans le service
-      const fromMemory = this.app.montres?.find((montre: any) => montre.otherData.reference == id);
-      if (fromMemory) {
-        this.montreClicked = fromMemory;
-        return;
-      }
+      this.montreClicked =
+        this.app.montres?.find((m: any) => m.otherData?.reference == id) ??
+        this.app.loadMontreById(id);
 
-      // 2. sinon : recharger / fallback propre
-      this.montreClicked = this.app.loadMontreById(id);
+      this.similar = this.computeSimilar();
     });
+  }
+
+  /**
+   * Classe les autres montres par proximité avec la montre affichée
+   * (marque, type de mouvement, calibre, matière de boîtier, année proche).
+   */
+  private computeSimilar(): any[] {
+    const cur = this.montreClicked;
+    if (!cur || !this.app.montres) return [];
+
+    const num = (v: any) => {
+      const n = parseInt(String(v ?? '').replace(/\D+/g, ''), 10);
+      return isNaN(n) ? null : n;
+    };
+    const curYear = num(cur.year);
+
+    const score = (m: any) => {
+      let s = 0;
+      if (m.brand && m.brand === cur.brand) s += 4;
+      if (m.movementType && m.movementType === cur.movementType) s += 2;
+      if (m.caliber && m.caliber === cur.caliber) s += 2;
+      if (m.case && m.case === cur.case) s += 1;
+      const y = num(m.year);
+      if (curYear != null && y != null && Math.abs(curYear - y) <= 10) s += 1;
+      return s;
+    };
+
+    return this.app.montres
+      .filter((m: any) => m.id !== cur.id)
+      .map((m: any) => ({ m, s: score(m) }))
+      .sort((a: any, b: any) => b.s - a.s)
+      .slice(0, 10)
+      .map((x: any) => x.m);
   }
 
   get images(): string[] {
