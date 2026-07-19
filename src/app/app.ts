@@ -41,18 +41,7 @@ export class App implements OnInit {
   @HostListener('window:scroll', [])
   onWindowScroll() {
     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
-    // Détection de la direction : true si on descend, false si on remonte
-    const scrollingDown = scrollTop > this.lastScrollTop;
-
-    // Mise à jour isScrolled pour > 80px
-    this.isScrolled = scrollTop > 80;
-
-    // Si on remonte et qu'on est entre 0 et 80px, scroll automatique à 0
-    if (!scrollingDown && scrollTop > 0 && scrollTop < 80) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
+    this.isScrolled = scrollTop > 8;
     this.lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // protection iOS
   }
 
@@ -135,10 +124,6 @@ export class App implements OnInit {
     return this.app.data.menus.filter((m: any) => !m.disabled);
   }
 
-  getMenus2() {
-    return this.app.data.menus2.filter((m: any) => !m.disabled);
-  }
-
   onMontreClick(montre: any) {
     console.log('ok', montre);
     this.app.clickMenu('watch', montre);
@@ -186,25 +171,9 @@ export class App implements OnInit {
     return resultats;
   }
 
-  async updateData() {
-    const res = await fetch('data.json');
-    this.app.data = await res.json();
-
-    this.http
-      .post<void>(this.link + 'sethorlogeraixois', this.app.data, {
-        headers: { 'Content-Type': 'application/json' },
-      })
-      .subscribe((data: any) => {
-        this.getData();
-      });
-  }
-
   getData() {
     this.http.get<any>(this.link + 'gethorlogeraixois').subscribe((data: any) => {
       this.app.data = data;
-      if (this.isDevMode()) {
-        this.app.data.menus2 = [{ fr: 'Ajout montre', en: 'Add watch', id: 'addwatch' }];
-      }
     });
   }
 }

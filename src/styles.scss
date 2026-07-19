@@ -177,32 +177,6 @@ button:active {
   opacity: 0.5;
 }
 
-.mobilemenu {
-  padding: 2vh 2vw;
-  transition: 1s;
-  position: fixed;
-  top: 46px;
-  z-index: 1;
-  background-color: var(--bg);
-  width: calc(100vw - 4vw);
-  opacity: 0;
-  height: 100%;
-  pointer-events: none;
-  p {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 0vh 1vw;
-    font-family: 'menus';
-    text-align: center;
-  }
-}
-
-.mobilemenu.visible {
-  left: 0vw;
-  opacity: 1;
-  pointer-events: unset;
-}
-
 .bloc {
   padding: 5vh 5vw;
 }
@@ -211,121 +185,243 @@ button:active {
   background-color: var(--lightorange);
 }
 
-.header {
+/* ===================================================================
+   Header
+   =================================================================== */
+.site-header {
   position: sticky;
-  top: -80px;
-  z-index: 10;
-  padding-top: 1vh;
+  top: 0;
+  z-index: 20;
   background-color: var(--orange);
-  background-image: linear-gradient(180deg, color-mix(in srgb, var(--orange) 92%, #000 8%), var(--orange));
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--orange) 94%, #000 6%), var(--orange));
   border-bottom: 1px solid var(--border);
-  box-shadow: var(--shadow-soft);
-  height: 121px;
-  .icons {
-    position: fixed;
-    top: 5px;
-    width: 90vw;
-    margin: 1vh 0vw;
-    margin-left: 5vw;
+  transition: box-shadow 0.3s var(--ease), background-color 0.4s var(--ease);
+
+  .header-inner {
+    height: 74px;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 clamp(16px, 4vw, 44px);
     display: flex;
-    justify-content: space-between;
-    .menu {
-      width: 25px;
-      position: absolute;
-      opacity: 0;
-      pointer-events: none;
-      left: 50px;
-      top: -2px;
-    }
-    .drapeau {
-      width: 30px;
-      left: 0px;
-      filter: drop-shadow(1px 1px 3px black);
-    }
-    .moon {
-      width: 25px;
-      position: absolute;
-      right: 40px;
-      top: -2px;
-    }
-    .loupe {
-      top: 1px;
-      width: 20px;
-      filter: drop-shadow(1px 1px 3px black);
-    }
-    .globalsearch {
-      position: absolute;
-      right: 40px;
-      border-radius: 10px;
-      text-align: center;
-      top: 1px;
-      width: 0px;
-      opacity: 0;
-      background-color: var(--lightorange);
-      color: var(--text);
-      outline: none;
-      border: 1px solid var(--darkorange);
-    }
-    .visible {
-      width: 10%;
-      opacity: 1;
-    }
+    align-items: center;
+    gap: 18px;
+    transition: height 0.3s var(--ease);
   }
-  .logo {
-    width: fit-content;
-    margin: auto;
-    top: 0px;
-    margin-bottom: 20px;
+  &.scrolled {
+    box-shadow: 0 8px 22px -12px rgba(0, 0, 0, 0.55);
+  }
+  &.scrolled .header-inner {
+    height: 60px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    cursor: pointer;
     img {
-      height: 56px;
-    }
-    p {
-      font-family: 'menus';
-    }
-    p:nth-child(1) {
-      font-weight: bold;
-      font-size: 30px;
-    }
-    p:nth-child(2) {
-      font-weight: bold;
-      font-size: 20px;
-      top: -18px;
-      left: 50px;
+      height: 46px;
+      width: auto;
+      transition: height 0.3s var(--ease);
     }
   }
-  .menus {
+  &.scrolled .brand img {
+    height: 38px;
+  }
+
+  .nav {
     display: flex;
-    margin: auto;
-    width: fit-content;
-    padding-bottom: 1vh;
-    pointer-events: unset;
-    p {
-      font-size: 24px;
-      font-weight: bold;
-      margin: 0vh 1vw;
-      font-family: 'menus';
-      letter-spacing: 0.04em;
-      padding-bottom: 3px;
-      color: var(--text);
+    align-items: center;
+    gap: clamp(6px, 1.5vw, 26px);
+    margin: 0 auto;
+  }
+  .nav-link {
+    font-family: var(--font-title);
+    font-weight: bold;
+    font-size: clamp(15px, 1.25vw, 19px);
+    letter-spacing: 0.04em;
+    color: var(--text);
+    cursor: pointer;
+    padding: 6px 2px;
+    white-space: nowrap;
+    opacity: 0.82;
+    transition: opacity 0.25s var(--ease), color 0.25s var(--ease);
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    right: 50%;
+    bottom: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: left 0.3s var(--ease), right 0.3s var(--ease);
+  }
+  .nav-link:hover {
+    opacity: 1;
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    left: 0;
+    right: 0;
+  }
+  .nav-link.active {
+    opacity: 1;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .icon-btn {
+    background: transparent;
+    border: none;
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    img {
+      display: block;
+      height: 22px;
+      width: 22px;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35));
     }
-    p::after {
-      content: '';
-      position: absolute;
-      left: 50%;
-      right: 50%;
-      bottom: 0;
+  }
+  .icon-btn:hover {
+    background: color-mix(in srgb, var(--accent) 22%, transparent);
+    transform: none;
+  }
+
+  .burger {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: none;
+    padding: 9px;
+    flex-shrink: 0;
+    span {
+      display: block;
       height: 2px;
-      background: var(--accent);
-      transition: left 0.3s var(--ease), right 0.3s var(--ease);
+      width: 100%;
+      background: var(--text);
+      border-radius: 2px;
+      transition: transform 0.3s var(--ease), opacity 0.2s var(--ease);
     }
-    p:hover::after,
-    p.clicked::after {
-      left: 0;
-      right: 0;
+  }
+  .burger:hover {
+    transform: none;
+  }
+  .burger.open span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+  }
+  .burger.open span:nth-child(2) {
+    opacity: 0;
+  }
+  .burger.open span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+}
+
+/* Menu mobile (tiroir) */
+.drawer-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 25;
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s var(--ease);
+}
+.drawer-backdrop.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mobile-drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 26;
+  height: 100vh;
+  width: min(300px, 82vw);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  transform: translateX(-102%);
+  transition: transform 0.35s var(--ease);
+  padding: 88px 0 24px;
+  display: flex;
+  flex-direction: column;
+
+  .drawer-link {
+    font-family: var(--font-title);
+    font-weight: bold;
+    font-size: 19px;
+    letter-spacing: 0.03em;
+    padding: 14px 26px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.2s var(--ease), border-color 0.2s var(--ease), color 0.2s var(--ease);
+  }
+  .drawer-link:hover {
+    background: var(--surface-2);
+  }
+  .drawer-link.active {
+    border-left-color: var(--accent);
+    color: var(--accent);
+  }
+  .drawer-actions {
+    margin-top: auto;
+    display: flex;
+    gap: 10px;
+    padding: 18px 26px 0;
+    button {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      img {
+        height: 18px;
+        width: 18px;
+      }
     }
-    .clicked {
-      opacity: 0.85;
-    }
+  }
+}
+.mobile-drawer.open {
+  transform: translateX(0);
+}
+
+@media (max-width: 860px) {
+  .site-header .nav {
+    display: none;
+  }
+  .site-header .burger {
+    display: flex;
+  }
+  .site-header .brand {
+    margin-left: 2px;
+  }
+  .site-header .actions {
+    margin-left: auto;
+  }
+  .site-header .header-inner {
+    height: 58px;
+    gap: 8px;
+  }
+  .site-header.scrolled .header-inner {
+    height: 54px;
   }
 }
 
@@ -682,13 +778,6 @@ button:active {
   }
 }
 .portrait {
-  .header {
-    .icons {
-      .visible {
-        width: 20%;
-      }
-    }
-  }
   .watch {
     .toptitle {
       display: block;
@@ -733,37 +822,7 @@ button:active {
     }
   }
 }
-.portrait.scrolled {
-  .header {
-    .logo {
-      top: 62px;
-    }
-    .menus {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .icons {
-      .menu {
-        opacity: 1;
-        pointer-events: unset;
-      }
-    }
-  }
-}
 .mobile {
-  .header {
-    .icons {
-      .visible {
-        width: 15%;
-      }
-    }
-    .logo {
-      img {
-        height: 42px;
-        top: 12px;
-      }
-    }
-  }
   .home {
     .doubleblocs {
       justify-content: space-between;
@@ -806,30 +865,6 @@ button:active {
       display: block;
       .form {
         width: unset;
-      }
-    }
-  }
-  .header {
-    .menus {
-      display: none;
-    }
-  }
-}
-.mobile:not(.scrolled) {
-  .header {
-    height: 40px;
-    .logo {
-      top: -18px;
-    }
-    .menus {
-      opacity: 0;
-      pointer-events: none;
-      top: -200px;
-    }
-    .icons {
-      .menu {
-        opacity: 1;
-        pointer-events: unset;
       }
     }
   }
@@ -929,61 +964,13 @@ img {
   }
 }
 
-/* ===================================================================
-   Header responsive — bascule fiable en menu compact sous 760px,
-   indépendamment de l'orientation (la détection JS existante ne se
-   déclenchait qu'en portrait étroit).
-   =================================================================== */
+/* Espacements de page plus compacts sur mobile */
 @media (max-width: 760px) {
-  .header {
-    height: 46px;
-    padding-top: 0;
-    top: 0;
-  }
-  .header .logo {
-    margin-bottom: 0;
-    top: 0;
-  }
-  .header .logo img {
-    height: 32px;
-    top: 7px;
-  }
-  .header .menus {
-    display: none;
-  }
-  /* Révèle le bouton menu (hamburger) et cache la loupe redondante */
-  .header .icons {
-    top: 12px;
-  }
-  .header .icons .menu {
-    opacity: 1;
-    pointer-events: auto;
-    left: 0;
-    top: 0;
-  }
-  .header .icons .drapeau {
-    left: 40px;
-  }
-
-  /* Le menu mobile s'ouvre juste sous le header compact */
-  .mobilemenu {
-    top: 46px;
-  }
-
-  /* Espacements de page plus compacts sur mobile */
   .bloc,
   .home .bloctexte,
   .shop .bloctexte,
   .about .bloc {
     padding-left: 6vw;
     padding-right: 6vw;
-  }
-}
-
-/* Tablettes : on resserre légèrement les menus pour éviter le débordement */
-@media (min-width: 761px) and (max-width: 980px) {
-  .header .menus p {
-    font-size: 20px;
-    margin: 0 0.7vw;
   }
 }

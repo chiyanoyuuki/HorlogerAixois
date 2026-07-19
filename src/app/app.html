@@ -5,60 +5,70 @@
   [class.scrolled]="isScrolled"
   [class.mobile]="app.mobile"
 >
-  <div class="mobilemenu" [class.visible]="app.mobilemenuvisible">
-    <div *ngFor="let menu of getMenus()">
-      <p class="clickable" (click)="clickMenu(menu['id'])">{{ menu[app.lg] | uppercase }}</p>
-      <div class="line"></div>
-    </div>
-  </div>
+  <header class="site-header" [class.scrolled]="isScrolled">
+    <div class="header-inner">
+      <button
+        class="burger"
+        [class.open]="app.mobilemenuvisible"
+        (click)="clickMobileMenu()"
+        aria-label="Menu"
+      >
+        <span></span><span></span><span></span>
+      </button>
 
-  <div class="header">
-    <div class="icons">
-      <img class="menu clickable" src="menu.png" (click)="clickMobileMenu()" />
-      <img
-        class="drapeau clickable"
-        (click)="app.lg == 'fr' ? (app.lg = 'en') : (app.lg = 'fr')"
-        src="{{ app.lg }}.png"
-      />
-      <img class="moon clickable" src="moon.png" (click)="toggleDarkMode()" />
-      <img
-        class="loupe clickable"
-        src="loupe.png"
-        (click)="clickMenu('watches', undefined, true)"
-      />
-    </div>
-    <div class="logo clickable" (click)="clickMenu('home')">
-      <img src="logo.png" />
-    </div>
+      <div class="brand clickable2" (click)="clickMenu('home')">
+        <img src="logo.png" alt="HorlogerAixois" />
+      </div>
 
-    <div class="menus">
-      <p
-        *ngFor="let menu of getMenus()"
-        class="clickable"
-        (click)="clickMenu(menu['id'])"
-        [class.clicked]="menuClicked == menu['id']"
-        [innerHTML]="menu[app.lg] | uppercase"
-      ></p>
-    </div>
+      <nav class="nav">
+        <a
+          *ngFor="let menu of getMenus()"
+          class="nav-link"
+          [class.active]="app.menuClicked == menu['id']"
+          (click)="clickMenu(menu['id'])"
+          [innerHTML]="menu[app.lg] | uppercase"
+        ></a>
+      </nav>
 
-    <div class="menus" *ngIf="isDevMode()">
-      <p
-        *ngFor="let menu of getMenus2()"
-        class="clickable"
-        (click)="clickMenu(menu['id'])"
-        [class.clicked]="menuClicked == menu['id']"
-        [innerHTML]="menu[app.lg] | uppercase"
-      ></p>
+      <div class="actions">
+        <button
+          class="icon-btn"
+          (click)="app.lg == 'fr' ? (app.lg = 'en') : (app.lg = 'fr')"
+          [title]="app.lg == 'fr' ? 'English' : 'Français'"
+        >
+          <img [src]="app.lg + '.png'" alt="" />
+        </button>
+        <button class="icon-btn" (click)="toggleDarkMode()" title="Thème clair / sombre">
+          <img src="moon.png" alt="" />
+        </button>
+        <button
+          class="icon-btn"
+          (click)="clickMenu('watches', undefined, true)"
+          title="Rechercher une montre"
+        >
+          <img src="loupe.png" alt="" />
+        </button>
+      </div>
     </div>
-  </div>
+  </header>
 
-  <button
-    (click)="updateData()"
-    *ngIf="isDevMode()"
-    style="position: fixed; left: 20px; top: 50px; z-index: 1000"
-  >
-    Save Data
-  </button>
+  <!-- Menu mobile -->
+  <div class="drawer-backdrop" [class.show]="app.mobilemenuvisible" (click)="clickMobileMenu()"></div>
+  <aside class="mobile-drawer" [class.open]="app.mobilemenuvisible">
+    <a
+      *ngFor="let menu of getMenus()"
+      class="drawer-link"
+      [class.active]="app.menuClicked == menu['id']"
+      (click)="clickMenu(menu['id'])"
+      [innerHTML]="menu[app.lg] | uppercase"
+    ></a>
+    <div class="drawer-actions">
+      <button (click)="app.lg == 'fr' ? (app.lg = 'en') : (app.lg = 'fr')">
+        <img [src]="app.lg + '.png'" alt="" /> {{ app.lg | uppercase }}
+      </button>
+      <button (click)="toggleDarkMode()"><img src="moon.png" alt="" /> Thème</button>
+    </div>
+  </aside>
 
   <router-outlet></router-outlet>
 

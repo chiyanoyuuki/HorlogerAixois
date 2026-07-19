@@ -10,7 +10,7 @@
   align-items: center;
   flex-wrap: wrap;
   position: sticky;
-  top: 122px;
+  top: 74px;
   z-index: 5;
   padding: 12px 0;
   background: var(--bg);
@@ -335,9 +335,9 @@
 }
 
 /* --- Responsive --- */
-@media (max-width: 760px) {
+@media (max-width: 860px) {
   .toolbar {
-    top: 46px;
+    top: 58px;
   }
   .controls {
     width: 100%;
