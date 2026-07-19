@@ -1,4 +1,4 @@
-<div class="page watch" *ngIf="app.data" [class.showContent]="app.showContent">
+<div class="page watch" *ngIf="app.data && montreClicked" [class.showContent]="app.showContent">
   <div class="toptitle">
     <p>{{ montreClicked.brand | uppercase }}</p>
     <p>{{ montreClicked.movementType }}</p>
@@ -6,32 +6,30 @@
   </div>
   <div class="topinfos graybloc">
     <div class="left">
-      <div class="bigpicture">
-        <img
-          src="{{ app.link }}watches/{{ montreClicked.id }}/{{ image }}"
-          *ngFor="let image of montreClicked.otherData.images; let i = index"
-          [style.left]="'calc(calc(100% * ' + i + ') - calc(100% * ' + indexImg + '))'"
-        />
+      <div class="gallery">
+        <button class="gnav prev" *ngIf="images.length > 1" (click)="prevImg()" aria-label="Précédent">‹</button>
+        <div class="bigpicture" [class.zoomable]="images.length" (click)="openLightbox()">
+          <img
+            *ngFor="let image of images; let i = index"
+            [src]="imgUrl(image)"
+            [class.active]="i === indexImg"
+            [alt]="montreClicked.brand + ' ' + montreClicked.model"
+          />
+          <span class="empty" *ngIf="!images.length">Aucune photo</span>
+          <span class="zoom-hint" *ngIf="images.length">⤢</span>
+        </div>
+        <button class="gnav next" *ngIf="images.length > 1" (click)="nextImg()" aria-label="Suivant">›</button>
       </div>
-      <div class="smallpictures">
-        <p
-          class="clickable"
-          (click)="indexImg = indexImg > 0 ? indexImg - 1 : montreClicked.img.length - 1"
+
+      <div class="thumbs" *ngIf="images.length > 1">
+        <button
+          class="thumb"
+          *ngFor="let image of images; let i = index"
+          [class.active]="i === indexImg"
+          (click)="select(i)"
         >
-          <
-        </p>
-        <img
-          class="clickable"
-          (click)="indexImg = i"
-          *ngFor="let image of montreClicked.otherData.images; let i = index"
-          src="{{ app.link }}watches/{{ montreClicked.id }}/{{ image }}"
-        />
-        <p
-          class="clickable"
-          (click)="indexImg = (indexImg + 1) % montreClicked.otherData.images.length"
-        >
-          >
-        </p>
+          <img [src]="imgUrl(image)" [alt]="'photo ' + (i + 1)" />
+        </button>
       </div>
     </div>
     <div class="right">
@@ -50,4 +48,27 @@
   </div>
 
   <app-lastarrival [title]="'similar'" (montreClick)="onMontreClick($event)"> </app-lastarrival>
+</div>
+
+<!-- Lightbox plein écran -->
+<div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+  <button class="lb-close" (click)="closeLightbox()" aria-label="Fermer">✕</button>
+  <button
+    class="lb-nav prev"
+    *ngIf="images.length > 1"
+    (click)="prevImg(); $event.stopPropagation()"
+    aria-label="Précédent"
+  >
+    ‹
+  </button>
+  <img [src]="imgUrl(images[indexImg])" (click)="$event.stopPropagation()" alt="" />
+  <button
+    class="lb-nav next"
+    *ngIf="images.length > 1"
+    (click)="nextImg(); $event.stopPropagation()"
+    aria-label="Suivant"
+  >
+    ›
+  </button>
+  <div class="lb-count" *ngIf="images.length > 1">{{ indexImg + 1 }} / {{ images.length }}</div>
 </div>
