@@ -1,0 +1,63 @@
+<!-- Chaîne courte -->
+<label class="node field" *ngIf="valueType === 'string' && !isLongText">
+  <span class="node-label">{{ displayLabel }}</span>
+  <input type="text" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
+</label>
+
+<!-- Chaîne longue -->
+<label class="node field" *ngIf="valueType === 'string' && isLongText">
+  <span class="node-label">{{ displayLabel }}</span>
+  <textarea rows="4" [(ngModel)]="node[key]" (ngModelChange)="onChange()"></textarea>
+</label>
+
+<!-- Nombre -->
+<label class="node field" *ngIf="valueType === 'number'">
+  <span class="node-label">{{ displayLabel }}</span>
+  <input type="number" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
+</label>
+
+<!-- Booléen -->
+<label class="node field checkbox" *ngIf="valueType === 'boolean'">
+  <input type="checkbox" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
+  <span class="node-label">{{ displayLabel }}</span>
+</label>
+
+<!-- Valeur vide -> proposer de la remplir en texte -->
+<label class="node field" *ngIf="valueType === 'empty'">
+  <span class="node-label">{{ displayLabel }}</span>
+  <input
+    type="text"
+    placeholder="(vide)"
+    [ngModel]="''"
+    (ngModelChange)="node[key] = $event; onChange()"
+  />
+</label>
+
+<!-- Groupe (objet) -->
+<fieldset class="node group" *ngIf="valueType === 'object'" [class.root]="depth === 0">
+  <legend *ngIf="depth > 0">{{ displayLabel }}</legend>
+  <admin-node
+    *ngFor="let k of objectKeys(value)"
+    [node]="value"
+    [key]="k"
+    [depth]="depth + 1"
+  ></admin-node>
+</fieldset>
+
+<!-- Liste (tableau) -->
+<fieldset class="node list" *ngIf="valueType === 'array'" [class.root]="depth === 0">
+  <legend>{{ displayLabel }} <span class="count">({{ value.length }})</span></legend>
+
+  <div class="list-item" *ngFor="let item of value; let i = index; trackBy: trackByIndex">
+    <div class="list-item-controls">
+      <button type="button" class="mini" (click)="move(i, -1)" [disabled]="i === 0" title="Monter">▲</button>
+      <button type="button" class="mini" (click)="move(i, 1)" [disabled]="i === value.length - 1" title="Descendre">▼</button>
+      <button type="button" class="mini danger" (click)="removeItem(i)" title="Supprimer">✕</button>
+    </div>
+    <div class="list-item-body">
+      <admin-node [node]="value" [key]="i" [depth]="depth + 1"></admin-node>
+    </div>
+  </div>
+
+  <button type="button" class="add-item" (click)="addItem()">＋ Ajouter</button>
+</fieldset>

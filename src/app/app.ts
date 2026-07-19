@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Service } from './service';
+import { Admin } from './admin/admin.service';
+import { AdminPanel } from './admin/admin-panel/admin-panel';
 
 @Component({
   selector: 'app-root',
-  imports: [FormsModule, CommonModule, RouterOutlet],
+  imports: [FormsModule, CommonModule, RouterOutlet, AdminPanel],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
@@ -58,6 +60,7 @@ export class App implements OnInit {
     private renderer: Renderer2,
     private http: HttpClient,
     public app: Service,
+    public admin: Admin,
   ) {}
 
   async ngOnInit() {

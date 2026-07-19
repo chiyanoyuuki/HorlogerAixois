@@ -1,0 +1,73 @@
+.login-wrap {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8vh 5vw;
+}
+.login-card {
+  width: min(380px, 100%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 34px 30px;
+  text-align: center;
+}
+.brand {
+  font-family: var(--font-title);
+  font-size: 26px;
+  font-weight: bold;
+  letter-spacing: 0.04em;
+}
+.subtitle {
+  color: var(--text-soft);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 4px;
+  margin-bottom: 26px;
+}
+form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+}
+form label span {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-soft);
+  font-weight: 600;
+}
+form input {
+  width: 100%;
+}
+form button {
+  width: 100%;
+  margin-top: 20px;
+  padding: 11px;
+}
+.error {
+  color: #e0655a;
+  font-size: 13px;
+  margin-top: 10px;
+}
+.connected {
+  margin-bottom: 20px;
+}
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.actions button {
+  width: 100%;
+  padding: 11px;
+}
+button.ghost {
+  background: transparent;
+  color: var(--text-soft);
+  border: 1px solid var(--border);
+}

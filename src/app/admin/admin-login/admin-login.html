@@ -1,0 +1,31 @@
+<div class="login-wrap">
+  <div class="login-card">
+    <div class="brand">HorlogerAixois</div>
+    <div class="subtitle">Espace d'administration</div>
+
+    <ng-container *ngIf="!admin.isAdmin">
+      <form (ngSubmit)="submit()">
+        <label>
+          <span>Mot de passe</span>
+          <input
+            type="password"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="current-password"
+            autofocus
+          />
+        </label>
+        <p class="error" *ngIf="error">Mot de passe incorrect.</p>
+        <button type="submit">Se connecter</button>
+      </form>
+    </ng-container>
+
+    <ng-container *ngIf="admin.isAdmin">
+      <p class="connected">Vous êtes connecté.</p>
+      <div class="actions">
+        <button (click)="openPanel()">Ouvrir le panneau d'édition</button>
+        <button class="ghost" (click)="admin.logout()">Se déconnecter</button>
+      </div>
+    </ng-container>
+  </div>
+</div>

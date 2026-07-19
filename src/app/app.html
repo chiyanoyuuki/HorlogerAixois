@@ -69,4 +69,18 @@
     <div class="line"></div>
     <p class="rightsreserved">@{{ currentYear }} {{ app.data[app.lg].rightsreserved }}</p>
   </div>
+
+  <!-- Administration -->
+  <app-admin-panel></app-admin-panel>
+  <button
+    class="admin-fab"
+    *ngIf="admin.isAdmin && !admin.panelOpen"
+    (click)="admin.togglePanel()"
+    title="Éditer le site"
+  >
+    ✎
+  </button>
+  <div class="admin-toast" *ngIf="admin.message" [class.error]="admin.messageError">
+    {{ admin.message }}
+  </div>
 </div>

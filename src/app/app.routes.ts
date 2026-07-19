@@ -9,6 +9,7 @@ import { Watch } from './watch/watch';
 import { Watches } from './watches/watches';
 import { Workshop } from './workshop/workshop';
 import { Addwatch } from './addwatch/addwatch';
+import { AdminLogin } from './admin/admin-login/admin-login';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -22,5 +23,6 @@ export const routes: Routes = [
   { path: 'about', component: About },
   { path: 'legal', component: Legal },
   { path: 'addwatch', component: Addwatch },
+  { path: 'admin', component: AdminLogin },
   { path: '**', redirectTo: 'home' },
 ];

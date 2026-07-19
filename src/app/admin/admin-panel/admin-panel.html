@@ -1,0 +1,103 @@
+<div class="backdrop" *ngIf="admin.panelOpen" (click)="close()"></div>
+
+<aside class="admin-panel" [class.open]="admin.panelOpen" *ngIf="admin.isAdmin">
+  <header class="panel-head">
+    <div class="panel-title">
+      <span class="dot"></span>
+      Administration
+    </div>
+    <button class="icon-btn" (click)="close()" title="Fermer">✕</button>
+  </header>
+
+  <nav class="tabs">
+    <button
+      *ngFor="let tab of contentTabs"
+      class="tab"
+      [class.active]="activeTab === tab.key"
+      (click)="selectTab(tab.key)"
+    >
+      {{ tab.label }}
+    </button>
+    <button class="tab watches-tab" [class.active]="activeTab === 'watches'" (click)="selectTab('watches')">
+      Montres
+    </button>
+  </nav>
+
+  <div class="panel-body">
+    <!-- Édition de contenu générique -->
+    <ng-container *ngIf="activeTab !== 'watches' && data">
+      <p class="section-hint">
+        Modifiez les textes ci-dessous puis cliquez sur <strong>Enregistrer</strong> en bas.
+      </p>
+      <admin-node [node]="data" [key]="activeTab" [depth]="0"></admin-node>
+    </ng-container>
+
+    <!-- Gestion des montres -->
+    <ng-container *ngIf="activeTab === 'watches'">
+      <div class="watches-manager">
+        <!-- Formulaire ajout / édition -->
+        <div class="watch-form">
+          <h3>{{ editingWatch ? 'Modifier la montre' : 'Ajouter une montre' }}</h3>
+
+          <div class="form-grid">
+            <label class="node field" *ngFor="let f of watchFields">
+              <span class="node-label">{{ f.label }}</span>
+              <input type="text" [(ngModel)]="watchForm[f.id]" />
+            </label>
+          </div>
+
+          <div class="images-field" *ngIf="!editingWatch">
+            <span class="node-label">Photos de la montre</span>
+            <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)" />
+            <div class="previews" *ngIf="imagePreviews.length">
+              <img *ngFor="let src of imagePreviews" [src]="src" alt="aperçu" />
+            </div>
+          </div>
+          <p class="edit-note" *ngIf="editingWatch">
+            La modification et la suppression nécessitent le support backend (voir ADMIN.md).
+          </p>
+
+          <div class="form-actions">
+            <button (click)="submitWatch()" [disabled]="submitting">
+              {{ submitting ? 'Envoi…' : editingWatch ? 'Enregistrer la montre' : 'Ajouter la montre' }}
+            </button>
+            <button class="ghost" *ngIf="editingWatch" (click)="cancelWatchForm()">Annuler</button>
+            <button class="ghost" *ngIf="!editingWatch && (watchForm | json) !== '{}'" (click)="startAddWatch()">
+              Vider le formulaire
+            </button>
+          </div>
+        </div>
+
+        <!-- Liste des montres existantes -->
+        <div class="watch-list">
+          <h3>Montres en ligne <span class="count">({{ montres.length }})</span></h3>
+          <div class="watch-row" *ngFor="let w of montres">
+            <div class="thumb">
+              <img *ngIf="watchImageUrl(w)" [src]="watchImageUrl(w)" alt="montre" />
+              <span *ngIf="!watchImageUrl(w)" class="no-img">—</span>
+            </div>
+            <div class="info">
+              <strong>{{ w.brand }} {{ w.model }}</strong>
+              <small>Réf. {{ w.otherData?.reference }}</small>
+            </div>
+            <div class="row-actions">
+              <button class="mini" (click)="startEditWatch(w)">Modifier</button>
+              <button class="mini danger" (click)="removeWatch(w)">Supprimer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <footer class="save-bar">
+    <span class="status" [class.dirty]="admin.dirty">
+      {{ admin.dirty ? 'Modifications non enregistrées' : 'À jour' }}
+    </span>
+    <div class="spacer"></div>
+    <button class="ghost" (click)="admin.logout()">Déconnexion</button>
+    <button (click)="admin.save()" [disabled]="admin.saving || !admin.dirty">
+      {{ admin.saving ? 'Enregistrement…' : 'Enregistrer' }}
+    </button>
+  </footer>
+</aside>
