@@ -1,0 +1,100 @@
+<section class="catalog">
+  <!-- Barre d'outils : recherche + tri + filtres -->
+  <div class="toolbar">
+    <div class="searchbox">
+      <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true">
+        <circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2" />
+        <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+      </svg>
+      <input
+        type="text"
+        [(ngModel)]="search"
+        [placeholder]="app.lg === 'fr' ? 'Rechercher une montre (marque, référence, calibre…)' : 'Search a watch (brand, reference, caliber…)'"
+      />
+      <button *ngIf="search" class="clear" (click)="search = ''" title="Effacer">✕</button>
+    </div>
+
+    <div class="controls">
+      <label class="sort">
+        <span>{{ app.data[app.lg]['tri'] || 'Tri' }}</span>
+        <select [(ngModel)]="sortId">
+          <option *ngFor="let o of sortOptions" [value]="o.id">{{ o.label }}</option>
+        </select>
+        <button class="dir" (click)="sortDir = sortDir === 'asc' ? 'desc' : 'asc'" [title]="sortDir === 'asc' ? 'Croissant' : 'Décroissant'">
+          {{ sortDir === 'asc' ? '↑' : '↓' }}
+        </button>
+      </label>
+
+      <button class="filter-toggle" [class.active]="showFilters" (click)="showFilters = !showFilters" *ngIf="facets.length">
+        {{ app.data[app.lg]['filtre'] || 'Filtres' }}
+        <span class="badge" *ngIf="activeFilterCount">{{ activeFilterCount }}</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Panneau de facettes -->
+  <div class="facets" *ngIf="showFilters && facets.length">
+    <div class="facet" *ngFor="let f of facets">
+      <button class="facet-head" (click)="toggleFacetOpen(f)">
+        <span>{{ f.label }}</span>
+        <span class="facet-meta">
+          <span class="facet-count" *ngIf="f.selected.size">{{ f.selected.size }}</span>
+          <span class="chevron" [class.open]="f.open">▾</span>
+        </span>
+      </button>
+      <div class="facet-values" *ngIf="f.open">
+        <button
+          *ngFor="let v of f.values"
+          class="chip"
+          [class.selected]="f.selected.has(v)"
+          (click)="toggleFacetValue(f, v)"
+        >
+          {{ v }}
+        </button>
+      </div>
+    </div>
+    <button class="clear-all" *ngIf="activeFilterCount || search" (click)="clearFilters()">
+      {{ app.data[app.lg]['delete_filters'] || 'Tout effacer' }}
+    </button>
+  </div>
+
+  <!-- Compteur -->
+  <div class="result-count">
+    {{ results.length }}
+    {{ results.length > 1 ? (app.lg === 'fr' ? 'montres' : 'watches') : (app.lg === 'fr' ? 'montre' : 'watch') }}
+  </div>
+
+  <!-- Grille -->
+  <div class="grid" *ngIf="results.length; else empty">
+    <article
+      class="card clickable2"
+      *ngFor="let m of results; trackBy: trackById"
+      (click)="clickMontre(m)"
+    >
+      <div class="thumb">
+        <img *ngIf="imageUrl(m)" [src]="imageUrl(m)" [alt]="m.brand + ' ' + m.model" loading="lazy" />
+        <div class="thumb-empty" *ngIf="!imageUrl(m)">
+          <span>{{ (m.brand || '?')[0] }}</span>
+        </div>
+        <span class="ref" [innerHTML]="highlight(val(m, 'reference'))"></span>
+      </div>
+      <div class="card-body">
+        <p class="brand" [innerHTML]="highlight(m.brand)"></p>
+        <p class="model" [innerHTML]="highlight(m.model)"></p>
+        <div class="meta">
+          <span class="year" *ngIf="val(m, 'year')">{{ val(m, 'year') }}</span>
+          <span class="price" *ngIf="price(m)">{{ price(m) }}</span>
+        </div>
+      </div>
+    </article>
+  </div>
+
+  <ng-template #empty>
+    <div class="empty-state">
+      <p>{{ app.lg === 'fr' ? 'Aucune montre ne correspond à votre recherche.' : 'No watch matches your search.' }}</p>
+      <button *ngIf="activeFilterCount || search" (click)="clearFilters()">
+        {{ app.lg === 'fr' ? 'Réinitialiser' : 'Reset' }}
+      </button>
+    </div>
+  </ng-template>
+</section>

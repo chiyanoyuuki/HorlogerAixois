@@ -429,12 +429,15 @@ button:active {
 }
 
 .watches {
+  .catalog-header {
+    padding: 4vh 5vw 3.5vh;
+  }
   .title {
     font-weight: bold;
     padding-top: 2vh;
     padding-bottom: 3vh;
     text-align: center;
-    font-size: 30px;
+    font-size: clamp(24px, 4vw, 32px);
     font-family: 'menus';
   }
 }
@@ -524,51 +527,54 @@ button:active {
       }
     }
     .right {
-      min-height: 100%;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       .info {
-        height: calc(100% / 8);
         display: flex;
-        p {
-          height: fit-content;
-          margin: auto;
-        }
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 16px;
+        padding: 12px 0;
+        border-bottom: 1px solid var(--border);
         p:nth-child(1) {
-          font-size: 25px;
+          font-size: 17px;
           font-weight: bold;
-          font-family: 'menus';
-          text-align: center;
-          width: 200px;
-          margin-left: 0vw;
+          font-family: var(--font-title);
+          letter-spacing: 0.02em;
           text-align: left;
+          color: var(--text-soft);
         }
         p:nth-child(2) {
-          font-size: 20px;
-          top: -2px;
-          white-space: nowrap;
+          font-size: 16px;
+          text-align: right;
         }
       }
     }
   }
   .bottominfos {
-    display: flex;
-    flex-flow: wrap;
-    margin-top: 5vh;
-    padding: 0vh 5vw 5vh 5vw;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 18px;
+    margin-top: 4vh;
+    padding: 0 5vw 5vh;
     .info {
-      width: calc(100% / 6);
-      margin-top: 5vh;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px 16px;
       p:nth-child(1) {
-        font-size: 20px;
+        font-size: 13px;
         font-weight: bold;
-        font-family: 'menus';
-        text-align: center;
-        width: 200px;
-        margin-left: 0vw;
-        text-align: left;
+        font-family: var(--font-title);
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+        color: var(--text-soft);
+        margin-bottom: 4px;
       }
       p:nth-child(2) {
-        font-size: 20px;
-        top: -2px;
+        font-size: 16px;
       }
     }
   }
@@ -920,5 +926,64 @@ img {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ===================================================================
+   Header responsive — bascule fiable en menu compact sous 760px,
+   indépendamment de l'orientation (la détection JS existante ne se
+   déclenchait qu'en portrait étroit).
+   =================================================================== */
+@media (max-width: 760px) {
+  .header {
+    height: 46px;
+    padding-top: 0;
+    top: 0;
+  }
+  .header .logo {
+    margin-bottom: 0;
+    top: 0;
+  }
+  .header .logo img {
+    height: 32px;
+    top: 7px;
+  }
+  .header .menus {
+    display: none;
+  }
+  /* Révèle le bouton menu (hamburger) et cache la loupe redondante */
+  .header .icons {
+    top: 12px;
+  }
+  .header .icons .menu {
+    opacity: 1;
+    pointer-events: auto;
+    left: 0;
+    top: 0;
+  }
+  .header .icons .drapeau {
+    left: 40px;
+  }
+
+  /* Le menu mobile s'ouvre juste sous le header compact */
+  .mobilemenu {
+    top: 46px;
+  }
+
+  /* Espacements de page plus compacts sur mobile */
+  .bloc,
+  .home .bloctexte,
+  .shop .bloctexte,
+  .about .bloc {
+    padding-left: 6vw;
+    padding-right: 6vw;
+  }
+}
+
+/* Tablettes : on resserre légèrement les menus pour éviter le débordement */
+@media (min-width: 761px) and (max-width: 980px) {
+  .header .menus p {
+    font-size: 20px;
+    margin: 0 0.7vw;
   }
 }

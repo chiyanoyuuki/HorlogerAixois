@@ -2,11 +2,9 @@
   <app-lastarrival [tri]="'arrivee'" [title]="'lastarrival'" (montreClick)="onMontreClick($event)">
   </app-lastarrival>
 
-  <app-lastarrival
-    [tri]="'created_at'"
-    [title]="'watches'"
-    [catalog]="true"
-    (montreClick)="onMontreClick($event)"
-  >
-  </app-lastarrival>
+  <div class="catalog-header graybloc">
+    <p class="title">{{ app.data[app.lg]['watches'] | uppercase }}</p>
+  </div>
+
+  <app-catalog (montreClick)="onMontreClick($event)"></app-catalog>
 </div>

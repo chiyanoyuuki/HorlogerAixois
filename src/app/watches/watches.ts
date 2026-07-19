@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Lastarrival } from '../lastarrival/lastarrival';
+import { Catalog } from '../catalog/catalog';
 import { Service } from '../service';
 
 @Component({
   selector: 'app-watches',
-  imports: [FormsModule, CommonModule, Lastarrival],
+  imports: [FormsModule, CommonModule, Lastarrival, Catalog],
   templateUrl: './watches.html',
   styleUrl: './watches.scss',
 })
