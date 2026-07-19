@@ -3,54 +3,66 @@
   padding-top: 2vh;
   padding-bottom: 3vh;
   text-align: center;
-  font-size: 30px;
-  font-family: 'menus';
+  font-size: clamp(24px, 4vw, 32px);
+  font-family: var(--font-title);
+  letter-spacing: 0.05em;
 }
 
 .movements,
 .complic {
   padding-bottom: 3vh;
 }
+
+/* Mouvements : blocs répartis, passent à la ligne au besoin */
 .types {
   display: flex;
-  justify-content: space-around;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(16px, 2.5vw, 32px);
   margin: auto;
-  width: 90%;
+  width: min(1200px, 92%);
   padding-bottom: 2vh;
-  pointer-events: unset;
-  overflow-x: auto;
   .type {
-    width: 30vw;
-    max-width: 400px;
-    min-width: 120px;
-    margin: 0vh 1vw;
+    width: clamp(200px, 26vw, 320px);
     img {
       width: 100%;
       object-fit: cover;
       height: 200px;
-      border-radius: 20px;
-      filter: drop-shadow(1px 1px 3px black) drop-shadow(1px 1px 3px black);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
     }
   }
   .menu {
     padding-bottom: 2vh;
-    height: 40px;
-    font-size: 20px;
-    margin: 0vh 3vw;
+    min-height: 40px;
+    font-size: 18px;
     text-align: center;
-    font-family: 'menus';
+    font-family: var(--font-title);
+    letter-spacing: 0.02em;
   }
   .menu2 {
-    padding-top: 2vh;
+    padding-top: 1.6vh;
     text-align: center;
+    color: var(--text-soft);
   }
 }
+
+/* Complications : défilement horizontal (souvent nombreuses) */
 .complic {
   .types {
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 0 4vw 2vh;
     .type {
-      width: 170px;
-      min-width: 170px;
-      max-width: 170px;
+      width: 180px;
+      min-width: 180px;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      img {
+        height: 180px;
+      }
     }
   }
 }

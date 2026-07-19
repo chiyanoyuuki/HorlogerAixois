@@ -3,33 +3,41 @@
   padding-top: 2vh;
   padding-bottom: 3vh;
   text-align: center;
-  font-size: 30px;
-  font-family: 'menus';
+  font-size: clamp(24px, 4vw, 32px);
+  font-family: var(--font-title);
+  letter-spacing: 0.05em;
 }
 .bloctexte {
-  padding: 5vh 10vw;
+  padding: clamp(3vh, 5vh, 6vh) clamp(6vw, 10vw, 12vw);
   p {
     text-align: center;
     margin-bottom: 1vh;
   }
 }
-img {
+.bigimg {
   display: block;
-  width: 100%;
+  width: min(1100px, 92%);
+  margin: 2vh auto;
+  border-radius: var(--radius);
 }
 .outils {
-  display: flex;
-  justify-content: space-between;
-  width: 90vw;
-  padding: 2vh 5vw;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: clamp(14px, 2vw, 24px);
+  width: min(1200px, 90vw);
+  margin: 2vh auto 0;
+  padding: 0;
   .outil {
-    width: 24%;
+    text-align: center;
     img {
-      height: 200px !important;
+      height: 210px !important;
       object-fit: cover !important;
     }
     p {
-      padding: 1vh 1vw;
+      padding: 1.6vh 1vw 0;
+      font-family: var(--font-title);
+      font-size: 17px;
+      letter-spacing: 0.02em;
     }
   }
 }

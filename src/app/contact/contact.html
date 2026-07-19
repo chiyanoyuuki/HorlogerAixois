@@ -1,18 +1,48 @@
 <div class="page contact" *ngIf="app.data" [class.showContent]="app.showContent">
-  <div class="forms bloc">
-    <div class="form" *ngFor="let form of app.data.contact" [class.full]="form.type == 'textarea'">
-      <p>{{ form[app.lg] }} :</p>
-      <input
-        type="text"
-        *ngIf="form.type == 'text'"
-        placeholder="{{ form.placeholder }}.."
-        [(ngModel)]="form.model"
-      />
-      <textarea
-        *ngIf="form.type == 'textarea'"
-        placeholder="{{ form.placeholder }}.."
-        [(ngModel)]="form.model"
-      ></textarea>
+  <div class="contact-wrap">
+    <div class="contact-card">
+      <p class="title">{{ (app.lg == 'fr' ? 'Nous contacter' : 'Contact us') | uppercase }}</p>
+      <p class="subtitle">
+        {{
+          app.lg == 'fr'
+            ? 'Une question, une estimation, un projet ? Écrivez-nous.'
+            : 'A question, an estimate, a project? Write to us.'
+        }}
+      </p>
+
+      <div class="forms">
+        <div
+          class="form"
+          *ngFor="let form of app.data.contact"
+          [class.full]="form.type == 'textarea'"
+        >
+          <label>{{ form[app.lg] }}</label>
+          <input
+            type="text"
+            *ngIf="form.type == 'text'"
+            placeholder="{{ form.placeholder }}"
+            [(ngModel)]="form.model"
+          />
+          <textarea
+            *ngIf="form.type == 'textarea'"
+            placeholder="{{ form.placeholder }}"
+            [(ngModel)]="form.model"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="send" (click)="sendMessage()">
+          {{ app.lg == 'fr' ? 'Envoyer le message' : 'Send message' }}
+        </button>
+        <p class="sent-note" *ngIf="sent">
+          {{
+            app.lg == 'fr'
+              ? 'Votre logiciel de messagerie va s’ouvrir avec votre message pré-rempli.'
+              : 'Your email app will open with your message pre-filled.'
+          }}
+        </p>
+      </div>
     </div>
   </div>
 </div>
