@@ -1,0 +1,412 @@
+From 6f04afd7f2ea3151b12fdd227ba15599b193356f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 19 Jul 2026 12:27:53 +0000
+Subject: [PATCH 1/2] design: modernise le systeme de design global (tokens,
+ typographie, composants)
+
+Reconstruit le socle visuel de styles.scss sans changer la direction
+artistique (fond sombre chaud, accent brun/or, police "menus") :
+
+- palette clarifiee en deux themes coherents (sombre par defaut + clair),
+  avec tokens semantiques (--surface, --border, --text-soft, --accent,
+  --shadow, rayons, transitions, familles de police)
+- boutons, selects, inputs et textarea homogenes avec etats focus visibles
+- header en degrade avec filet et ombre, soulignement anime des menus
+- titres de section avec filet d'accent, sections alternees plus douces
+- transition d'entree de page plus fluide, prise en charge de
+  prefers-reduced-motion
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FdLcncGNUNUg7f4MuZZx7g
+---
+ src/styles.scss | 287 +++++++++++++++++++++++++++++++++++++++++-------
+ 1 file changed, 249 insertions(+), 38 deletions(-)
+
+diff --git a/src/styles.scss b/src/styles.scss
+index 2b69fa2..a8b1c7d 100644
+--- a/src/styles.scss
++++ b/src/styles.scss
+@@ -1,81 +1,176 @@
+ @font-face {
+   font-family: menus;
+   src: url(../public/menus.otf) format('openType');
++  font-display: swap;
+ }
+ 
++/* ===================================================================
++   HorlogerAixois — Design system
++   Palette chaude (brun / or) sur fond sombre par défaut, avec un
++   thème clair (data-theme='dark' conservé pour compatibilité).
++   =================================================================== */
++
++/* --- Thème clair (activé via le bouton lune / data-theme='dark') --- */
+ :root[data-theme='dark'] {
+-  --orange: rgb(255, 217, 176);
+-  --lightorange: rgba(145, 140, 135, 0.3);
+-  --darkorange: rgb(148, 114, 81);
++  --orange: rgb(120, 92, 62);
++  --lightorange: rgba(120, 92, 62, 0.1);
++  --darkorange: rgb(150, 116, 82);
+ 
+-  --bg: #ffffff;
+-  --text: #000000;
++  --bg: #f7f3ee;
++  --surface: #ffffff;
++  --surface-2: #f0e9e0;
++  --text: #2a2320;
++  --text-soft: rgba(42, 35, 32, 0.66);
++  --border: rgba(120, 92, 62, 0.22);
++  --accent: rgb(140, 104, 66);
++  --accent-contrast: #ffffff;
++  --shadow: 0 10px 30px -12px rgba(60, 42, 24, 0.35);
++  --shadow-soft: 0 4px 16px -8px rgba(60, 42, 24, 0.25);
+ }
+ 
++/* --- Thème sombre (par défaut) --- */
+ :root {
+-  --orange: rgb(116, 90, 63);
+-  --lightorange: rgb(63, 58, 50);
+-  --darkorange: rgb(200, 160, 120);
++  --orange: rgb(97, 74, 50);
++  --lightorange: rgba(219, 191, 155, 0.08);
++  --darkorange: rgb(199, 161, 118);
++
++  --bg: #100e0c;
++  --surface: #17140f;
++  --surface-2: #1e1a14;
++  --text: #e9ded0;
++  --text-soft: rgba(233, 222, 208, 0.6);
++  --border: rgba(199, 161, 118, 0.18);
++  --accent: rgb(199, 161, 118);
++  --accent-contrast: #17140f;
++  --shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.75);
++  --shadow-soft: 0 8px 24px -14px rgba(0, 0, 0, 0.6);
+ 
+-  --bg: #111111;
+-  --text: #bebebe;
++  /* Échelle & primitives partagées */
++  --radius-sm: 6px;
++  --radius: 12px;
++  --radius-lg: 20px;
++  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
++  --font-title: 'menus', 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
++  --font-body: 'Inter', 'Helvetica Neue', 'Segoe UI', system-ui, -apple-system, sans-serif;
+ }
+ 
+ * {
+   position: relative;
+   margin: 0;
+-  transition: 0.5s;
+-  scrollbar-color: var(--darkorange) var(--orange);
++  box-sizing: border-box;
++  transition:
++    background-color 0.4s var(--ease),
++    color 0.4s var(--ease),
++    border-color 0.4s var(--ease),
++    opacity 0.35s var(--ease),
++    transform 0.35s var(--ease),
++    box-shadow 0.35s var(--ease);
++  scrollbar-color: var(--darkorange) transparent;
+   scrollbar-width: thin;
+   color: var(--text);
+ }
+ 
++html {
++  scroll-behavior: smooth;
++}
++
+ body {
+   overflow-x: hidden;
+-  transition: 0s;
++  transition: background-color 0.4s var(--ease);
+   width: 100%;
+   max-width: 100%;
+   background: var(--bg);
+   color: var(--text);
++  font-family: var(--font-body);
++  font-size: 16px;
++  line-height: 1.6;
++  -webkit-font-smoothing: antialiased;
++  text-rendering: optimizeLegibility;
++}
++
++p {
++  line-height: 1.65;
++}
++
++::selection {
++  background: var(--accent);
++  color: var(--accent-contrast);
+ }
+ 
+ select {
+-  border: unset;
+-  background-color: var(--orange);
++  appearance: none;
++  border: 1px solid var(--border);
++  background-color: var(--surface-2);
++  color: var(--text);
+   text-align: center;
+-  padding: 3px;
++  padding: 7px 30px 7px 14px;
+   margin: auto;
+-  border: 1px solid var(--darkorange);
++  border-radius: var(--radius-sm);
++  cursor: pointer;
++  background-image: linear-gradient(45deg, transparent 50%, var(--accent) 50%),
++    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
++  background-position:
++    calc(100% - 15px) center,
++    calc(100% - 10px) center;
++  background-size: 5px 5px, 5px 5px;
++  background-repeat: no-repeat;
++}
++select:hover {
++  border-color: var(--accent);
++}
++
++input,
++textarea {
++  font-family: var(--font-body);
++  color: var(--text);
++}
++input:focus-visible,
++textarea:focus-visible,
++select:focus-visible,
++button:focus-visible {
++  outline: 2px solid var(--accent);
++  outline-offset: 2px;
+ }
+ 
+ button {
+-  border: unset;
+-  background-color: var(--orange);
++  border: 1px solid var(--accent);
++  background-color: var(--accent);
++  color: var(--accent-contrast);
+   text-align: center;
+-  padding: 3px;
++  padding: 8px 18px;
+   margin: auto;
+-  border: 1px solid var(--darkorange);
+-  font-weight: bold;
++  border-radius: var(--radius-sm);
++  font-weight: 600;
++  letter-spacing: 0.03em;
++  font-family: var(--font-body);
+ }
+ button:hover {
+   cursor: pointer;
+-  opacity: 0.6;
++  filter: brightness(1.08);
++  transform: translateY(-1px);
++}
++button:active {
++  transform: translateY(0);
+ }
+ 
+ .line {
+   height: 1px;
+   width: 90%;
+-  margin: auto;
+-  margin-top: 1vh;
+-  margin-bottom: 1vh;
++  margin: 1.4vh auto;
+   display: flex;
+-  border-bottom: 1px solid var(--lightorange);
++  border-bottom: 1px solid var(--border);
+ }
+ 
++.clickable {
++  transition:
++    opacity 0.3s var(--ease),
++    transform 0.3s var(--ease),
++    color 0.3s var(--ease);
++}
+ .clickable:hover {
+   cursor: pointer;
+-  opacity: 0.5;
+-  scale: 1.1;
++  opacity: 0.62;
++  transform: scale(1.08);
+ }
+ .clickable2:hover {
+   cursor: pointer;
+@@ -122,6 +217,9 @@ button:hover {
+   z-index: 10;
+   padding-top: 1vh;
+   background-color: var(--orange);
++  background-image: linear-gradient(180deg, color-mix(in srgb, var(--orange) 92%, #000 8%), var(--orange));
++  border-bottom: 1px solid var(--border);
++  box-shadow: var(--shadow-soft);
+   height: 121px;
+   .icons {
+     position: fixed;
+@@ -202,13 +300,31 @@ button:hover {
+     padding-bottom: 1vh;
+     pointer-events: unset;
+     p {
+-      font-size: 25px;
++      font-size: 24px;
+       font-weight: bold;
+       margin: 0vh 1vw;
+       font-family: 'menus';
++      letter-spacing: 0.04em;
++      padding-bottom: 3px;
++      color: var(--text);
++    }
++    p::after {
++      content: '';
++      position: absolute;
++      left: 50%;
++      right: 50%;
++      bottom: 0;
++      height: 2px;
++      background: var(--accent);
++      transition: left 0.3s var(--ease), right 0.3s var(--ease);
++    }
++    p:hover::after,
++    p.clicked::after {
++      left: 0;
++      right: 0;
+     }
+     .clicked {
+-      opacity: 0.5;
++      opacity: 0.85;
+     }
+   }
+ }
+@@ -536,20 +652,27 @@ button:hover {
+ 
+ .footer {
+   background-color: var(--orange);
+-  padding: 2vh 2vw;
++  background-image: linear-gradient(180deg, var(--orange), color-mix(in srgb, var(--orange) 90%, #000 10%));
++  border-top: 1px solid var(--border);
++  padding: 3.5vh 2vw 2.5vh;
++  margin-top: 4vh;
+   .mentionsconf {
+     display: flex;
+     justify-content: center;
+     p {
+       width: fit-content;
+-      opacity: 0.7;
+-      font-size: 16px;
++      opacity: 0.85;
++      font-size: 15px;
++      letter-spacing: 0.03em;
++      font-family: var(--font-title);
+     }
+   }
+   .rightsreserved {
+-    opacity: 0.7;
++    opacity: 0.6;
+     text-align: center;
+-    font-size: 10px;
++    font-size: 11px;
++    letter-spacing: 0.06em;
++    margin-top: 0.5vh;
+   }
+ }
+ .portrait {
+@@ -707,7 +830,95 @@ button:hover {
+ }
+ 
+ .highlight {
+-  background-color: var(--orange);
+-  color: var(--darkorange) !important;
++  background-color: var(--accent);
++  color: var(--accent-contrast) !important;
+   font-weight: bold;
++  border-radius: 3px;
++  padding: 0 2px;
++}
++
++/* ===================================================================
++   Raffinements globaux — homogénéité & modernité
++   =================================================================== */
++
++/* Titres de section : espacement typographique + filet d'accent centré */
++.title {
++  letter-spacing: 0.05em;
++  line-height: 1.2;
++}
++.bloctexte .title::after,
++.about .bloc .title::after,
++.watches > .title::after,
++.horology .title::after {
++  content: '';
++  display: block;
++  width: 54px;
++  height: 2px;
++  margin: 1.4vh auto 0;
++  background: var(--accent);
++  opacity: 0.8;
++}
++.smalltitle {
++  letter-spacing: 0.08em;
++  color: var(--text-soft);
++}
++
++/* Sections alternées plus douces + coins arrondis sur grand écran */
++.graybloc {
++  background-color: var(--surface);
++  border-top: 1px solid var(--border);
++  border-bottom: 1px solid var(--border);
++}
++
++/* Transition d'entrée de page plus fluide */
++.page {
++  opacity: 0;
++  transform: translateY(10px);
++  transition:
++    opacity 0.5s var(--ease),
++    transform 0.5s var(--ease);
++}
++.page.showContent {
++  opacity: 1;
++  transform: translateY(0);
++}
++
++/* Champs de formulaire homogènes */
++input[type='text'],
++input[type='number'],
++input[type='date'],
++input[type='email'],
++input[type='password'],
++textarea {
++  background: var(--surface-2);
++  border: 1px solid var(--border);
++  border-radius: var(--radius-sm);
++  padding: 9px 12px;
++  transition:
++    border-color 0.25s var(--ease),
++    box-shadow 0.25s var(--ease);
++}
++input[type='text']:focus,
++input[type='number']:focus,
++input[type='email']:focus,
++input[type='password']:focus,
++textarea:focus {
++  border-color: var(--accent);
++  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
++  outline: none;
++}
++
++/* Images : rendu plus doux par défaut dans les cartes/carousels */
++img {
++  -webkit-user-drag: none;
++}
++
++/* Réduction des animations si demandé par l'utilisateur */
++@media (prefers-reduced-motion: reduce) {
++  *,
++  .page {
++    transition-duration: 0.01ms !important;
++    animation-duration: 0.01ms !important;
++    scroll-behavior: auto !important;
++  }
+ }
+-- 
+2.43.0
+

@@ -1,0 +1,1574 @@
+From 7fc02bd03e5f9680403ae5772a840331158c6610 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 19 Jul 2026 12:27:53 +0000
+Subject: [PATCH 2/2] admin: mode d'administration complet (connexion, edition
+ de contenu, montres)
+
+Ajoute un veritable mode admin permettant au client de tout modifier sans
+connaissance technique :
+
+- page /admin avec connexion par mot de passe (cote client, cf ADMIN.md)
+- panneau lateral a onglets couvrant chaque section du site
+- editeur recursif generique (admin-node) : chaque texte devient un champ,
+  chaque liste est reordonnable / extensible / reductible
+- enregistrement global du contenu via POST sethorlogeraixois
+- gestion des montres : ajout reel (images compressees -> montreshorloger.php),
+  modification et suppression cablees (contrat backend documente dans ADMIN.md)
+- bouton flottant d'edition + notifications (toasts)
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FdLcncGNUNUg7f4MuZZx7g
+---
+ ADMIN.md                                   | 104 ++++++++
+ src/app/admin/admin-login/admin-login.html |  31 +++
+ src/app/admin/admin-login/admin-login.scss |  73 ++++++
+ src/app/admin/admin-login/admin-login.ts   |  38 +++
+ src/app/admin/admin-node/admin-node.html   |  63 +++++
+ src/app/admin/admin-node/admin-node.scss   | 113 +++++++++
+ src/app/admin/admin-node/admin-node.ts     | 106 ++++++++
+ src/app/admin/admin-panel/admin-panel.html | 103 ++++++++
+ src/app/admin/admin-panel/admin-panel.scss | 272 +++++++++++++++++++++
+ src/app/admin/admin-panel/admin-panel.ts   | 149 +++++++++++
+ src/app/admin/admin.service.ts             | 212 ++++++++++++++++
+ src/app/admin/label-map.ts                 |  70 ++++++
+ src/app/app.html                           |  14 ++
+ src/app/app.routes.ts                      |   2 +
+ src/app/app.scss                           |  41 ++++
+ src/app/app.ts                             |   5 +-
+ 16 files changed, 1395 insertions(+), 1 deletion(-)
+ create mode 100644 ADMIN.md
+ create mode 100644 src/app/admin/admin-login/admin-login.html
+ create mode 100644 src/app/admin/admin-login/admin-login.scss
+ create mode 100644 src/app/admin/admin-login/admin-login.ts
+ create mode 100644 src/app/admin/admin-node/admin-node.html
+ create mode 100644 src/app/admin/admin-node/admin-node.scss
+ create mode 100644 src/app/admin/admin-node/admin-node.ts
+ create mode 100644 src/app/admin/admin-panel/admin-panel.html
+ create mode 100644 src/app/admin/admin-panel/admin-panel.scss
+ create mode 100644 src/app/admin/admin-panel/admin-panel.ts
+ create mode 100644 src/app/admin/admin.service.ts
+ create mode 100644 src/app/admin/label-map.ts
+
+diff --git a/ADMIN.md b/ADMIN.md
+new file mode 100644
+index 0000000..12c45b5
+--- /dev/null
++++ b/ADMIN.md
+@@ -0,0 +1,104 @@
++# Guide d'administration — HorlogerAixois
++
++Ce document explique le **mode administration** ajouté au site : comment s'y
++connecter, ce qu'on peut modifier, et ce qui reste à câbler côté serveur.
++
++---
++
++## 1. Accéder à l'administration
++
++1. Aller sur **`https://<le-site>/admin`**
++2. Saisir le **mot de passe** (voir §2)
++3. Le panneau d'édition s'ouvre. Un bouton flottant **✎** (en bas à droite)
++   permet de le rouvrir à tout moment tant qu'on est connecté.
++
++La session reste active tant que l'onglet du navigateur est ouvert
++(`sessionStorage`). « Déconnexion » (en bas du panneau) la ferme.
++
++## 2. Changer le mot de passe
++
++> ⚠️ Par défaut : **`horloger2025`** — **à changer avant mise en ligne.**
++
++Éditer la constante dans `src/app/admin/admin.service.ts` :
++
++```ts
++private readonly PASSWORD = 'horloger2025'; // ← mettre votre mot de passe ici
++```
++
++puis reconstruire (`npm run build`) et redéployer.
++
++**Note de sécurité.** Cette authentification est **côté client** : elle
++protège l'accès à l'interface, mais n'est pas une barrière serveur.
++L'endpoint `sethorlogeraixois` est de toute façon déjà ouvert en écriture.
++Pour un vrai contrôle d'accès, ajouter un endpoint d'authentification PHP
++(retour d'un token) et l'appeler depuis `login()` — voir §5.
++
++## 3. Modifier le contenu du site
++
++Le panneau range le contenu par **onglets** correspondant aux sections :
++
++| Onglet                | Ce qu'on y modifie                                          |
++| --------------------- | ----------------------------------------------------------- |
++| Accueil               | Titres et paragraphes de la page d'accueil (FR/EN)          |
++| Magasin / Atelier     | Textes et images de ces pages                               |
++| Horlogerie            | Présentation, mouvements, complications                     |
++| À propos / Contact    | Blocs de texte, champs du formulaire                        |
++| Navigation            | Libellés des menus, affichage/masquage (case « Masqué »)    |
++| Français / Anglais    | Tous les textes d'interface (boutons, titres récurrents…)   |
++| Images des blocs      | Noms de fichiers d'images des carrousels                    |
++| Champs des fiches     | Libellés des caractéristiques techniques des montres        |
++| Montres               | Ajout / modification / suppression des montres              |
++
++L'éditeur est **générique** : chaque texte devient un champ, chaque liste
++peut être réordonnée (▲ ▼), complétée (**＋ Ajouter**) ou allégée (**✕**).
++
++Après toute modification, le bandeau du bas indique « Modifications non
++enregistrées ». Cliquer sur **Enregistrer** envoie l'ensemble du contenu au
++serveur (`POST sethorlogeraixois`).
++
++## 4. Gérer les montres
++
++Onglet **Montres** :
++
++- **Ajouter** : remplir les caractéristiques, joindre des photos, puis
++  « Ajouter la montre ». Les images sont compressées côté navigateur puis
++  envoyées à `montreshorloger.php` (comme le flux d'import existant).
++- **Modifier / Supprimer** : boutons présents sur chaque montre de la liste.
++
++> L'**ajout** fonctionne avec le backend actuel. La **modification** et la
++> **suppression** nécessitent le support serveur décrit ci-dessous.
++
++## 5. Contrat backend à compléter (édition / suppression de montres)
++
++Le front envoie déjà les requêtes ; il reste à les traiter côté PHP dans
++`montreshorloger.php` :
++
++**Supprimer** — `POST montreshorloger.php` (multipart) :
++
++```
++action=delete
++id=<id de la montre>
++```
++
++**Modifier** — `POST montreshorloger.php` (multipart) :
++
++```
++action=update
++id=<id de la montre>
++<champ>=<valeur>   (brand, model, price, …)
++```
++
++Tant que ces actions ne sont pas gérées, l'ajout reste pleinement
++fonctionnel et les boutons Modifier/Suppression afficheront un message
++d'erreur clair.
++
++## 6. Où se trouve le code
++
++```
++src/app/admin/
++├── admin.service.ts          # état, connexion, sauvegarde, CRUD montres
++├── label-map.ts              # libellés FR lisibles des champs
++├── admin-node/               # éditeur récursif générique (texte/liste/groupe)
++├── admin-panel/              # panneau à onglets + gestion des montres
++└── admin-login/              # page /admin (connexion)
++```
+diff --git a/src/app/admin/admin-login/admin-login.html b/src/app/admin/admin-login/admin-login.html
+new file mode 100644
+index 0000000..0de5134
+--- /dev/null
++++ b/src/app/admin/admin-login/admin-login.html
+@@ -0,0 +1,31 @@
++<div class="login-wrap">
++  <div class="login-card">
++    <div class="brand">HorlogerAixois</div>
++    <div class="subtitle">Espace d'administration</div>
++
++    <ng-container *ngIf="!admin.isAdmin">
++      <form (ngSubmit)="submit()">
++        <label>
++          <span>Mot de passe</span>
++          <input
++            type="password"
++            [(ngModel)]="password"
++            name="password"
++            autocomplete="current-password"
++            autofocus
++          />
++        </label>
++        <p class="error" *ngIf="error">Mot de passe incorrect.</p>
++        <button type="submit">Se connecter</button>
++      </form>
++    </ng-container>
++
++    <ng-container *ngIf="admin.isAdmin">
++      <p class="connected">Vous êtes connecté.</p>
++      <div class="actions">
++        <button (click)="openPanel()">Ouvrir le panneau d'édition</button>
++        <button class="ghost" (click)="admin.logout()">Se déconnecter</button>
++      </div>
++    </ng-container>
++  </div>
++</div>
+diff --git a/src/app/admin/admin-login/admin-login.scss b/src/app/admin/admin-login/admin-login.scss
+new file mode 100644
+index 0000000..7efc14e
+--- /dev/null
++++ b/src/app/admin/admin-login/admin-login.scss
+@@ -0,0 +1,73 @@
++.login-wrap {
++  min-height: 70vh;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  padding: 8vh 5vw;
++}
++.login-card {
++  width: min(380px, 100%);
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow);
++  padding: 34px 30px;
++  text-align: center;
++}
++.brand {
++  font-family: var(--font-title);
++  font-size: 26px;
++  font-weight: bold;
++  letter-spacing: 0.04em;
++}
++.subtitle {
++  color: var(--text-soft);
++  font-size: 13px;
++  letter-spacing: 0.06em;
++  text-transform: uppercase;
++  margin-top: 4px;
++  margin-bottom: 26px;
++}
++form label {
++  display: flex;
++  flex-direction: column;
++  gap: 6px;
++  text-align: left;
++}
++form label span {
++  font-size: 12px;
++  text-transform: uppercase;
++  letter-spacing: 0.04em;
++  color: var(--text-soft);
++  font-weight: 600;
++}
++form input {
++  width: 100%;
++}
++form button {
++  width: 100%;
++  margin-top: 20px;
++  padding: 11px;
++}
++.error {
++  color: #e0655a;
++  font-size: 13px;
++  margin-top: 10px;
++}
++.connected {
++  margin-bottom: 20px;
++}
++.actions {
++  display: flex;
++  flex-direction: column;
++  gap: 10px;
++}
++.actions button {
++  width: 100%;
++  padding: 11px;
++}
++button.ghost {
++  background: transparent;
++  color: var(--text-soft);
++  border: 1px solid var(--border);
++}
+diff --git a/src/app/admin/admin-login/admin-login.ts b/src/app/admin/admin-login/admin-login.ts
+new file mode 100644
+index 0000000..5515818
+--- /dev/null
++++ b/src/app/admin/admin-login/admin-login.ts
+@@ -0,0 +1,38 @@
++import { Component } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { FormsModule } from '@angular/forms';
++import { Router } from '@angular/router';
++import { Admin } from '../admin.service';
++
++@Component({
++  selector: 'app-admin-login',
++  standalone: true,
++  imports: [CommonModule, FormsModule],
++  templateUrl: './admin-login.html',
++  styleUrl: './admin-login.scss',
++})
++export class AdminLogin {
++  password = '';
++  error = false;
++
++  constructor(
++    public admin: Admin,
++    private router: Router,
++  ) {}
++
++  submit() {
++    this.error = false;
++    if (this.admin.login(this.password)) {
++      this.password = '';
++      this.admin.panelOpen = true;
++      this.router.navigate(['home']);
++    } else {
++      this.error = true;
++    }
++  }
++
++  openPanel() {
++    this.admin.panelOpen = true;
++    this.router.navigate(['home']);
++  }
++}
+diff --git a/src/app/admin/admin-node/admin-node.html b/src/app/admin/admin-node/admin-node.html
+new file mode 100644
+index 0000000..cc0e190
+--- /dev/null
++++ b/src/app/admin/admin-node/admin-node.html
+@@ -0,0 +1,63 @@
++<!-- Chaîne courte -->
++<label class="node field" *ngIf="valueType === 'string' && !isLongText">
++  <span class="node-label">{{ displayLabel }}</span>
++  <input type="text" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
++</label>
++
++<!-- Chaîne longue -->
++<label class="node field" *ngIf="valueType === 'string' && isLongText">
++  <span class="node-label">{{ displayLabel }}</span>
++  <textarea rows="4" [(ngModel)]="node[key]" (ngModelChange)="onChange()"></textarea>
++</label>
++
++<!-- Nombre -->
++<label class="node field" *ngIf="valueType === 'number'">
++  <span class="node-label">{{ displayLabel }}</span>
++  <input type="number" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
++</label>
++
++<!-- Booléen -->
++<label class="node field checkbox" *ngIf="valueType === 'boolean'">
++  <input type="checkbox" [(ngModel)]="node[key]" (ngModelChange)="onChange()" />
++  <span class="node-label">{{ displayLabel }}</span>
++</label>
++
++<!-- Valeur vide -> proposer de la remplir en texte -->
++<label class="node field" *ngIf="valueType === 'empty'">
++  <span class="node-label">{{ displayLabel }}</span>
++  <input
++    type="text"
++    placeholder="(vide)"
++    [ngModel]="''"
++    (ngModelChange)="node[key] = $event; onChange()"
++  />
++</label>
++
++<!-- Groupe (objet) -->
++<fieldset class="node group" *ngIf="valueType === 'object'" [class.root]="depth === 0">
++  <legend *ngIf="depth > 0">{{ displayLabel }}</legend>
++  <admin-node
++    *ngFor="let k of objectKeys(value)"
++    [node]="value"
++    [key]="k"
++    [depth]="depth + 1"
++  ></admin-node>
++</fieldset>
++
++<!-- Liste (tableau) -->
++<fieldset class="node list" *ngIf="valueType === 'array'" [class.root]="depth === 0">
++  <legend>{{ displayLabel }} <span class="count">({{ value.length }})</span></legend>
++
++  <div class="list-item" *ngFor="let item of value; let i = index; trackBy: trackByIndex">
++    <div class="list-item-controls">
++      <button type="button" class="mini" (click)="move(i, -1)" [disabled]="i === 0" title="Monter">▲</button>
++      <button type="button" class="mini" (click)="move(i, 1)" [disabled]="i === value.length - 1" title="Descendre">▼</button>
++      <button type="button" class="mini danger" (click)="removeItem(i)" title="Supprimer">✕</button>
++    </div>
++    <div class="list-item-body">
++      <admin-node [node]="value" [key]="i" [depth]="depth + 1"></admin-node>
++    </div>
++  </div>
++
++  <button type="button" class="add-item" (click)="addItem()">＋ Ajouter</button>
++</fieldset>
+diff --git a/src/app/admin/admin-node/admin-node.scss b/src/app/admin/admin-node/admin-node.scss
+new file mode 100644
+index 0000000..cf8e7e5
+--- /dev/null
++++ b/src/app/admin/admin-node/admin-node.scss
+@@ -0,0 +1,113 @@
++:host {
++  display: block;
++}
++
++.node.field {
++  display: flex;
++  flex-direction: column;
++  gap: 5px;
++  margin: 10px 0;
++}
++
++.node-label {
++  font-size: 12px;
++  letter-spacing: 0.04em;
++  text-transform: uppercase;
++  color: var(--text-soft);
++  font-weight: 600;
++}
++
++.node.field input,
++.node.field textarea {
++  width: 100%;
++  font-size: 14px;
++}
++.node.field textarea {
++  resize: vertical;
++  line-height: 1.5;
++}
++
++.node.field.checkbox {
++  flex-direction: row;
++  align-items: center;
++  gap: 8px;
++}
++.node.field.checkbox input {
++  width: auto;
++}
++.node.field.checkbox .node-label {
++  text-transform: none;
++}
++
++fieldset.node {
++  border: 1px solid var(--border);
++  border-radius: var(--radius-sm);
++  padding: 10px 12px 12px;
++  margin: 12px 0;
++  min-width: 0;
++}
++fieldset.node.root {
++  border: none;
++  padding: 0;
++  margin: 0;
++}
++
++legend {
++  font-family: var(--font-title);
++  font-size: 15px;
++  letter-spacing: 0.03em;
++  padding: 0 6px;
++  color: var(--accent);
++}
++legend .count {
++  color: var(--text-soft);
++  font-size: 12px;
++}
++
++.list-item {
++  display: flex;
++  gap: 8px;
++  align-items: flex-start;
++  border-left: 2px solid var(--border);
++  padding-left: 10px;
++  margin: 8px 0;
++}
++.list-item-body {
++  flex: 1;
++  min-width: 0;
++}
++.list-item-controls {
++  display: flex;
++  flex-direction: column;
++  gap: 3px;
++  padding-top: 10px;
++}
++
++button.mini {
++  padding: 2px 6px;
++  font-size: 11px;
++  line-height: 1;
++  background: var(--surface-2);
++  color: var(--text);
++  border: 1px solid var(--border);
++}
++button.mini:hover {
++  border-color: var(--accent);
++  transform: none;
++}
++button.mini:disabled {
++  opacity: 0.35;
++  cursor: default;
++}
++button.mini.danger:hover {
++  color: #e0655a;
++  border-color: #e0655a;
++}
++
++button.add-item {
++  margin: 6px 0 0;
++  background: transparent;
++  color: var(--accent);
++  border: 1px dashed var(--accent);
++  font-size: 13px;
++}
+diff --git a/src/app/admin/admin-node/admin-node.ts b/src/app/admin/admin-node/admin-node.ts
+new file mode 100644
+index 0000000..7059f39
+--- /dev/null
++++ b/src/app/admin/admin-node/admin-node.ts
+@@ -0,0 +1,106 @@
++import { Component, Input } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { FormsModule } from '@angular/forms';
++import { Admin } from '../admin.service';
++import { humanize } from '../label-map';
++
++/**
++ * Éditeur récursif d'un nœud de données.
++ *
++ * Reçoit un conteneur (`node`, objet ou tableau) et une `key` (nom de
++ * propriété ou index) et affiche le bon contrôle selon le type de la valeur :
++ * champ texte, zone de texte, nombre, case à cocher, ou groupe/liste
++ * imbriqués (qui se ré-affichent via <admin-node> — récursivité).
++ *
++ * Les valeurs sont liées directement au conteneur (mutation en place), donc
++ * chaque modification est immédiatement reflétée dans `app.data`.
++ */
++@Component({
++  selector: 'admin-node',
++  standalone: true,
++  imports: [CommonModule, FormsModule, AdminNode],
++  templateUrl: './admin-node.html',
++  styleUrl: './admin-node.scss',
++})
++export class AdminNode {
++  @Input() node: any;
++  @Input() key!: string | number;
++  @Input() label?: string;
++  /** Cache un niveau de titre pour les listes racine plus compactes. */
++  @Input() depth = 0;
++
++  constructor(public admin: Admin) {}
++
++  get value(): any {
++    return this.node?.[this.key as any];
++  }
++
++  get displayLabel(): string {
++    if (this.label != null) return this.label;
++    if (typeof this.key === 'number') return `Élément ${this.key + 1}`;
++    return humanize(String(this.key));
++  }
++
++  get valueType(): 'string' | 'number' | 'boolean' | 'array' | 'object' | 'empty' {
++    const v = this.value;
++    if (v === null || v === undefined) return 'empty';
++    if (Array.isArray(v)) return 'array';
++    if (typeof v === 'object') return 'object';
++    if (typeof v === 'number') return 'number';
++    if (typeof v === 'boolean') return 'boolean';
++    return 'string';
++  }
++
++  get isLongText(): boolean {
++    const v = this.value;
++    return typeof v === 'string' && (v.length > 55 || v.includes('\n'));
++  }
++
++  objectKeys(v: any): string[] {
++    return v ? Object.keys(v) : [];
++  }
++
++  onChange() {
++    this.admin.markDirty();
++  }
++
++  // ---- Édition des listes ----------------------------------------------
++
++  private cloneEmpty(sample: any): any {
++    if (Array.isArray(sample)) return [];
++    if (sample && typeof sample === 'object') {
++      const out: any = {};
++      for (const k of Object.keys(sample)) out[k] = this.cloneEmpty(sample[k]);
++      return out;
++    }
++    if (typeof sample === 'number') return 0;
++    if (typeof sample === 'boolean') return false;
++    return '';
++  }
++
++  addItem() {
++    if (!Array.isArray(this.value)) return;
++    const sample = this.value.length ? this.value[this.value.length - 1] : '';
++    this.value.push(this.cloneEmpty(sample));
++    this.onChange();
++  }
++
++  removeItem(i: number) {
++    if (!Array.isArray(this.value)) return;
++    if (!confirm('Supprimer cet élément ?')) return;
++    this.value.splice(i, 1);
++    this.onChange();
++  }
++
++  move(i: number, dir: number) {
++    if (!Array.isArray(this.value)) return;
++    const j = i + dir;
++    if (j < 0 || j >= this.value.length) return;
++    [this.value[i], this.value[j]] = [this.value[j], this.value[i]];
++    this.onChange();
++  }
++
++  trackByIndex(i: number) {
++    return i;
++  }
++}
+diff --git a/src/app/admin/admin-panel/admin-panel.html b/src/app/admin/admin-panel/admin-panel.html
+new file mode 100644
+index 0000000..128be63
+--- /dev/null
++++ b/src/app/admin/admin-panel/admin-panel.html
+@@ -0,0 +1,103 @@
++<div class="backdrop" *ngIf="admin.panelOpen" (click)="close()"></div>
++
++<aside class="admin-panel" [class.open]="admin.panelOpen" *ngIf="admin.isAdmin">
++  <header class="panel-head">
++    <div class="panel-title">
++      <span class="dot"></span>
++      Administration
++    </div>
++    <button class="icon-btn" (click)="close()" title="Fermer">✕</button>
++  </header>
++
++  <nav class="tabs">
++    <button
++      *ngFor="let tab of contentTabs"
++      class="tab"
++      [class.active]="activeTab === tab.key"
++      (click)="selectTab(tab.key)"
++    >
++      {{ tab.label }}
++    </button>
++    <button class="tab watches-tab" [class.active]="activeTab === 'watches'" (click)="selectTab('watches')">
++      Montres
++    </button>
++  </nav>
++
++  <div class="panel-body">
++    <!-- Édition de contenu générique -->
++    <ng-container *ngIf="activeTab !== 'watches' && data">
++      <p class="section-hint">
++        Modifiez les textes ci-dessous puis cliquez sur <strong>Enregistrer</strong> en bas.
++      </p>
++      <admin-node [node]="data" [key]="activeTab" [depth]="0"></admin-node>
++    </ng-container>
++
++    <!-- Gestion des montres -->
++    <ng-container *ngIf="activeTab === 'watches'">
++      <div class="watches-manager">
++        <!-- Formulaire ajout / édition -->
++        <div class="watch-form">
++          <h3>{{ editingWatch ? 'Modifier la montre' : 'Ajouter une montre' }}</h3>
++
++          <div class="form-grid">
++            <label class="node field" *ngFor="let f of watchFields">
++              <span class="node-label">{{ f.label }}</span>
++              <input type="text" [(ngModel)]="watchForm[f.id]" />
++            </label>
++          </div>
++
++          <div class="images-field" *ngIf="!editingWatch">
++            <span class="node-label">Photos de la montre</span>
++            <input type="file" accept="image/*" multiple (change)="onImagesSelected($event)" />
++            <div class="previews" *ngIf="imagePreviews.length">
++              <img *ngFor="let src of imagePreviews" [src]="src" alt="aperçu" />
++            </div>
++          </div>
++          <p class="edit-note" *ngIf="editingWatch">
++            La modification et la suppression nécessitent le support backend (voir ADMIN.md).
++          </p>
++
++          <div class="form-actions">
++            <button (click)="submitWatch()" [disabled]="submitting">
++              {{ submitting ? 'Envoi…' : editingWatch ? 'Enregistrer la montre' : 'Ajouter la montre' }}
++            </button>
++            <button class="ghost" *ngIf="editingWatch" (click)="cancelWatchForm()">Annuler</button>
++            <button class="ghost" *ngIf="!editingWatch && (watchForm | json) !== '{}'" (click)="startAddWatch()">
++              Vider le formulaire
++            </button>
++          </div>
++        </div>
++
++        <!-- Liste des montres existantes -->
++        <div class="watch-list">
++          <h3>Montres en ligne <span class="count">({{ montres.length }})</span></h3>
++          <div class="watch-row" *ngFor="let w of montres">
++            <div class="thumb">
++              <img *ngIf="watchImageUrl(w)" [src]="watchImageUrl(w)" alt="montre" />
++              <span *ngIf="!watchImageUrl(w)" class="no-img">—</span>
++            </div>
++            <div class="info">
++              <strong>{{ w.brand }} {{ w.model }}</strong>
++              <small>Réf. {{ w.otherData?.reference }}</small>
++            </div>
++            <div class="row-actions">
++              <button class="mini" (click)="startEditWatch(w)">Modifier</button>
++              <button class="mini danger" (click)="removeWatch(w)">Supprimer</button>
++            </div>
++          </div>
++        </div>
++      </div>
++    </ng-container>
++  </div>
++
++  <footer class="save-bar">
++    <span class="status" [class.dirty]="admin.dirty">
++      {{ admin.dirty ? 'Modifications non enregistrées' : 'À jour' }}
++    </span>
++    <div class="spacer"></div>
++    <button class="ghost" (click)="admin.logout()">Déconnexion</button>
++    <button (click)="admin.save()" [disabled]="admin.saving || !admin.dirty">
++      {{ admin.saving ? 'Enregistrement…' : 'Enregistrer' }}
++    </button>
++  </footer>
++</aside>
+diff --git a/src/app/admin/admin-panel/admin-panel.scss b/src/app/admin/admin-panel/admin-panel.scss
+new file mode 100644
+index 0000000..e10a27f
+--- /dev/null
++++ b/src/app/admin/admin-panel/admin-panel.scss
+@@ -0,0 +1,272 @@
++:host {
++  display: block;
++}
++
++.backdrop {
++  position: fixed;
++  inset: 0;
++  background: rgba(0, 0, 0, 0.45);
++  z-index: 1000;
++  animation: fade 0.25s ease;
++}
++@keyframes fade {
++  from {
++    opacity: 0;
++  }
++}
++
++.admin-panel {
++  position: fixed;
++  top: 0;
++  right: 0;
++  height: 100vh;
++  width: min(460px, 100vw);
++  background: var(--surface);
++  border-left: 1px solid var(--border);
++  box-shadow: var(--shadow);
++  z-index: 1001;
++  display: flex;
++  flex-direction: column;
++  transform: translateX(102%);
++  transition: transform 0.4s var(--ease);
++}
++.admin-panel.open {
++  transform: translateX(0);
++}
++
++.panel-head {
++  display: flex;
++  align-items: center;
++  justify-content: space-between;
++  padding: 16px 18px;
++  border-bottom: 1px solid var(--border);
++}
++.panel-title {
++  font-family: var(--font-title);
++  font-size: 19px;
++  letter-spacing: 0.04em;
++  display: flex;
++  align-items: center;
++  gap: 10px;
++}
++.dot {
++  width: 9px;
++  height: 9px;
++  border-radius: 50%;
++  background: #4caf7d;
++  box-shadow: 0 0 0 3px color-mix(in srgb, #4caf7d 25%, transparent);
++}
++.icon-btn {
++  background: transparent;
++  border: none;
++  color: var(--text-soft);
++  font-size: 16px;
++  padding: 4px 8px;
++}
++.icon-btn:hover {
++  color: var(--text);
++  transform: none;
++}
++
++.tabs {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 4px;
++  padding: 10px 12px;
++  border-bottom: 1px solid var(--border);
++}
++.tab {
++  background: transparent;
++  border: 1px solid var(--border);
++  color: var(--text-soft);
++  padding: 5px 11px;
++  font-size: 12.5px;
++  font-weight: 600;
++  border-radius: 999px;
++}
++.tab:hover {
++  color: var(--text);
++  border-color: var(--accent);
++  transform: none;
++}
++.tab.active {
++  background: var(--accent);
++  color: var(--accent-contrast);
++  border-color: var(--accent);
++}
++.tab.watches-tab {
++  margin-left: auto;
++}
++
++.panel-body {
++  flex: 1;
++  overflow-y: auto;
++  padding: 16px 18px 24px;
++}
++.section-hint {
++  font-size: 13px;
++  color: var(--text-soft);
++  margin-bottom: 12px;
++}
++
++/* ---- Montres ---- */
++.watch-form h3,
++.watch-list h3 {
++  font-family: var(--font-title);
++  font-size: 17px;
++  margin-bottom: 12px;
++  letter-spacing: 0.03em;
++}
++.watch-list h3 .count {
++  color: var(--text-soft);
++  font-size: 13px;
++}
++.form-grid {
++  display: grid;
++  grid-template-columns: 1fr 1fr;
++  gap: 10px;
++}
++.node.field {
++  display: flex;
++  flex-direction: column;
++  gap: 5px;
++}
++.node-label {
++  font-size: 12px;
++  letter-spacing: 0.04em;
++  text-transform: uppercase;
++  color: var(--text-soft);
++  font-weight: 600;
++}
++.node.field input {
++  width: 100%;
++  font-size: 14px;
++}
++.images-field {
++  margin-top: 14px;
++  display: flex;
++  flex-direction: column;
++  gap: 8px;
++}
++.previews {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 8px;
++}
++.previews img {
++  width: 64px;
++  height: 64px;
++  object-fit: cover;
++  border-radius: var(--radius-sm);
++  border: 1px solid var(--border);
++}
++.edit-note {
++  margin-top: 12px;
++  font-size: 12px;
++  color: #d99a4e;
++}
++.form-actions {
++  display: flex;
++  gap: 8px;
++  margin-top: 16px;
++  flex-wrap: wrap;
++}
++button.ghost {
++  background: transparent;
++  color: var(--text-soft);
++  border: 1px solid var(--border);
++}
++button.ghost:hover {
++  color: var(--text);
++  border-color: var(--accent);
++}
++
++.watch-list {
++  margin-top: 28px;
++  border-top: 1px solid var(--border);
++  padding-top: 20px;
++}
++.watch-row {
++  display: flex;
++  align-items: center;
++  gap: 12px;
++  padding: 8px 0;
++  border-bottom: 1px solid var(--border);
++}
++.thumb {
++  width: 48px;
++  height: 48px;
++  flex-shrink: 0;
++  border-radius: var(--radius-sm);
++  overflow: hidden;
++  background: var(--surface-2);
++  display: flex;
++  align-items: center;
++  justify-content: center;
++}
++.thumb img {
++  width: 100%;
++  height: 100%;
++  object-fit: cover;
++}
++.no-img {
++  color: var(--text-soft);
++}
++.info {
++  flex: 1;
++  min-width: 0;
++  display: flex;
++  flex-direction: column;
++}
++.info strong {
++  font-size: 14px;
++}
++.info small {
++  color: var(--text-soft);
++  font-size: 12px;
++}
++.row-actions {
++  display: flex;
++  gap: 6px;
++}
++button.mini {
++  padding: 4px 9px;
++  font-size: 12px;
++  background: var(--surface-2);
++  color: var(--text);
++  border: 1px solid var(--border);
++}
++button.mini:hover {
++  border-color: var(--accent);
++  transform: none;
++}
++button.mini.danger:hover {
++  color: #e0655a;
++  border-color: #e0655a;
++}
++
++.save-bar {
++  display: flex;
++  align-items: center;
++  gap: 10px;
++  padding: 12px 16px;
++  border-top: 1px solid var(--border);
++  background: var(--surface-2);
++}
++.status {
++  font-size: 12px;
++  color: var(--text-soft);
++}
++.status.dirty {
++  color: #d99a4e;
++  font-weight: 600;
++}
++.spacer {
++  flex: 1;
++}
++
++@media (max-width: 560px) {
++  .form-grid {
++    grid-template-columns: 1fr;
++  }
++}
+diff --git a/src/app/admin/admin-panel/admin-panel.ts b/src/app/admin/admin-panel/admin-panel.ts
+new file mode 100644
+index 0000000..736a83f
+--- /dev/null
++++ b/src/app/admin/admin-panel/admin-panel.ts
+@@ -0,0 +1,149 @@
++import { Component } from '@angular/core';
++import { CommonModule } from '@angular/common';
++import { FormsModule } from '@angular/forms';
++import { Admin } from '../admin.service';
++import { AdminNode } from '../admin-node/admin-node';
++import { humanize } from '../label-map';
++
++interface Tab {
++  key: string;
++  label: string;
++}
++
++@Component({
++  selector: 'app-admin-panel',
++  standalone: true,
++  imports: [CommonModule, FormsModule, AdminNode],
++  templateUrl: './admin-panel.html',
++  styleUrl: './admin-panel.scss',
++})
++export class AdminPanel {
++  activeTab = 'home';
++
++  // Formulaire d'ajout / édition de montre
++  editingWatch: any = null;
++  watchForm: Record<string, any> = {};
++  newImages: File[] = [];
++  imagePreviews: string[] = [];
++  submitting = false;
++
++  /** Ordre & libellés des onglets de contenu (ceux présents dans data). */
++  private contentOrder = [
++    'home',
++    'shop',
++    'workshop',
++    'horology',
++    'about',
++    'contact',
++    'menus',
++    'fr',
++    'en',
++    'blocs',
++    'ordre',
++  ];
++
++  constructor(public admin: Admin) {}
++
++  get data(): any {
++    return this.admin.app.data;
++  }
++
++  get contentTabs(): Tab[] {
++    if (!this.data) return [];
++    return this.contentOrder
++      .filter((k) => this.data[k] !== undefined)
++      .map((k) => ({ key: k, label: humanize(k) }));
++  }
++
++  get montres(): any[] {
++    return this.admin.app.montres ?? [];
++  }
++
++  selectTab(key: string) {
++    this.activeTab = key;
++  }
++
++  close() {
++    this.admin.panelOpen = false;
++  }
++
++  // ---- Gestion des montres ---------------------------------------------
++
++  get watchFields(): { id: string; label: string }[] {
++    const ordre = this.data?.ordre ?? [];
++    const base = [
++      { id: 'reference', fr: 'Référence', en: 'Reference' },
++      { id: 'price', fr: 'Prix', en: 'Price' },
++    ];
++    const lg = this.admin.app.lg;
++    return [...base, ...ordre]
++      .filter((f: any) => f.id !== 'created_at')
++      .map((f: any) => ({ id: f.id, label: f[lg] ?? f.fr ?? f.id }));
++  }
++
++  startAddWatch() {
++    this.editingWatch = null;
++    this.watchForm = {};
++    this.clearImages();
++  }
++
++  startEditWatch(watch: any) {
++    this.editingWatch = watch;
++    this.watchForm = {};
++    for (const f of this.watchFields) {
++      if (f.id === 'reference') this.watchForm[f.id] = watch?.otherData?.reference ?? '';
++      else this.watchForm[f.id] = watch?.[f.id] ?? '';
++    }
++    this.clearImages();
++  }
++
++  cancelWatchForm() {
++    this.editingWatch = null;
++    this.watchForm = {};
++    this.clearImages();
++  }
++
++  onImagesSelected(event: Event) {
++    const input = event.target as HTMLInputElement;
++    if (!input.files) return;
++    this.clearImages();
++    this.newImages = Array.from(input.files);
++    this.imagePreviews = this.newImages.map((f) => URL.createObjectURL(f));
++  }
++
++  private clearImages() {
++    this.imagePreviews.forEach((u) => URL.revokeObjectURL(u));
++    this.imagePreviews = [];
++    this.newImages = [];
++  }
++
++  watchImageUrl(watch: any): string | null {
++    const imgs = watch?.otherData?.images;
++    if (imgs && imgs.length) return `${this.admin.link}watches/${watch.id}/${imgs[0]}`;
++    return null;
++  }
++
++  async submitWatch() {
++    if (this.submitting) return;
++    const fields: Record<string, any> = {};
++    for (const f of this.watchFields) {
++      if (this.watchForm[f.id] !== undefined && this.watchForm[f.id] !== '') {
++        fields[f.id] = this.watchForm[f.id];
++      }
++    }
++    this.submitting = true;
++    let ok = false;
++    if (this.editingWatch) {
++      ok = await this.admin.updateWatch(this.editingWatch.id, fields);
++    } else {
++      ok = await this.admin.addWatch(fields, this.newImages);
++    }
++    this.submitting = false;
++    if (ok) this.cancelWatchForm();
++  }
++
++  async removeWatch(watch: any) {
++    if (!confirm(`Supprimer la montre « ${watch?.otherData?.reference ?? watch.id} » ?`)) return;
++    await this.admin.deleteWatch(watch.id);
++  }
++}
+diff --git a/src/app/admin/admin.service.ts b/src/app/admin/admin.service.ts
+new file mode 100644
+index 0000000..d14fdc3
+--- /dev/null
++++ b/src/app/admin/admin.service.ts
+@@ -0,0 +1,212 @@
++import { Injectable, isDevMode } from '@angular/core';
++import { HttpClient } from '@angular/common/http';
++import { Service } from '../service';
++
++/**
++ * Service d'administration.
++ *
++ * Sécurité : l'authentification est volontairement côté client (mot de passe
++ * simple). Elle protège l'accès à l'interface d'édition mais N'EST PAS une
++ * sécurité serveur — l'endpoint `sethorlogeraixois` est de toute façon ouvert
++ * en écriture. Pour un vrai contrôle d'accès, ajouter un endpoint d'auth PHP
++ * (voir ADMIN.md) et remplacer `login()`.
++ *
++ * Persistance :
++ *  - Tout le contenu éditorial du site vit dans `app.data` et est enregistré
++ *    en un seul appel `POST sethorlogeraixois`.
++ *  - Les montres passent par `montreshorloger.php` (ajout confirmé ; la
++ *    modification / suppression nécessitent le support backend décrit dans
++ *    ADMIN.md).
++ */
++@Injectable({ providedIn: 'root' })
++export class Admin {
++  isAdmin = false;
++  panelOpen = false;
++  saving = false;
++  dirty = false;
++  message = '';
++  messageError = false;
++
++  /** ⚠️ À PERSONNALISER par le client. Mot de passe d'accès à l'admin. */
++  private readonly PASSWORD = 'horloger2025';
++
++  link = 'http' + (isDevMode() ? '' : 's') + '://chiyanh.cluster031.hosting.ovh.net/';
++
++  constructor(
++    private http: HttpClient,
++    public app: Service,
++  ) {
++    this.isAdmin = sessionStorage.getItem('ha_admin') === '1';
++  }
++
++  login(password: string): boolean {
++    if (password === this.PASSWORD) {
++      this.isAdmin = true;
++      sessionStorage.setItem('ha_admin', '1');
++      return true;
++    }
++    return false;
++  }
++
++  logout() {
++    this.isAdmin = false;
++    this.panelOpen = false;
++    sessionStorage.removeItem('ha_admin');
++  }
++
++  togglePanel() {
++    this.panelOpen = !this.panelOpen;
++  }
++
++  markDirty() {
++    this.dirty = true;
++  }
++
++  flash(msg: string, error = false) {
++    this.message = msg;
++    this.messageError = error;
++    setTimeout(() => (this.message = ''), 3500);
++  }
++
++  /** Enregistre l'intégralité du contenu éditorial du site. */
++  save() {
++    if (this.saving) return;
++    this.saving = true;
++    this.http
++      .post<void>(this.link + 'sethorlogeraixois', this.app.data, {
++        headers: { 'Content-Type': 'application/json' },
++      })
++      .subscribe({
++        next: () => {
++          this.saving = false;
++          this.dirty = false;
++          this.flash('Modifications enregistrées ✓');
++        },
++        error: () => {
++          this.saving = false;
++          this.flash("Erreur lors de l'enregistrement. Réessayez.", true);
++        },
++      });
++  }
++
++  /** Recharge les montres depuis le serveur. */
++  reloadWatches() {
++    this.app.getWatches();
++  }
++
++  /**
++   * Ajoute une montre (données + images) via `montreshorloger.php`.
++   * `fields` = paires clé/valeur des caractéristiques ; `images` = File[].
++   */
++  async addWatch(fields: Record<string, any>, images: File[]): Promise<boolean> {
++    const formData = new FormData();
++    Object.keys(fields).forEach((k) => formData.append(k, fields[k] ?? ''));
++    for (const file of images) {
++      const compressed = await this.compressImage(file, 1);
++      formData.append('images[]', compressed);
++    }
++    return new Promise((resolve) => {
++      this.http.post(this.link + 'montreshorloger.php', formData).subscribe({
++        next: () => {
++          this.flash('Montre ajoutée ✓');
++          this.reloadWatches();
++          resolve(true);
++        },
++        error: () => {
++          this.flash("Erreur lors de l'ajout de la montre.", true);
++          resolve(false);
++        },
++      });
++    });
++  }
++
++  /**
++   * Supprime une montre. Nécessite que le backend accepte une requête POST
++   * avec `action=delete` + `id` sur `montreshorloger.php` (voir ADMIN.md).
++   */
++  deleteWatch(id: string | number): Promise<boolean> {
++    const formData = new FormData();
++    formData.append('action', 'delete');
++    formData.append('id', String(id));
++    return new Promise((resolve) => {
++      this.http.post(this.link + 'montreshorloger.php', formData).subscribe({
++        next: () => {
++          this.flash('Montre supprimée ✓');
++          this.reloadWatches();
++          resolve(true);
++        },
++        error: () => {
++          this.flash('Suppression impossible (support backend requis).', true);
++          resolve(false);
++        },
++      });
++    });
++  }
++
++  /**
++   * Met à jour les caractéristiques d'une montre existante. Nécessite le
++   * support backend `action=update` + `id` (voir ADMIN.md).
++   */
++  updateWatch(id: string | number, fields: Record<string, any>): Promise<boolean> {
++    const formData = new FormData();
++    formData.append('action', 'update');
++    formData.append('id', String(id));
++    Object.keys(fields).forEach((k) => formData.append(k, fields[k] ?? ''));
++    return new Promise((resolve) => {
++      this.http.post(this.link + 'montreshorloger.php', formData).subscribe({
++        next: () => {
++          this.flash('Montre mise à jour ✓');
++          this.reloadWatches();
++          resolve(true);
++        },
++        error: () => {
++          this.flash('Mise à jour impossible (support backend requis).', true);
++          resolve(false);
++        },
++      });
++    });
++  }
++
++  /** Compression d'image côté client (identique au flux d'ajout existant). */
++  private async compressImage(file: File, maxSizeMB = 1, qualityStep = 0.9): Promise<File> {
++    return new Promise((resolve, reject) => {
++      const img = new Image();
++      const reader = new FileReader();
++      reader.onload = (e) => (img.src = e.target!.result as string);
++      img.onload = () => {
++        const canvas = document.createElement('canvas');
++        const ctx = canvas.getContext('2d')!;
++        let width = img.width;
++        let height = img.height;
++        const maxDimension = 1920;
++        if (width > maxDimension || height > maxDimension) {
++          const ratio = Math.min(maxDimension / width, maxDimension / height);
++          width *= ratio;
++          height *= ratio;
++        }
++        canvas.width = width;
++        canvas.height = height;
++        ctx.drawImage(img, 0, 0, width, height);
++        let quality = qualityStep;
++        const tryCompress = () => {
++          canvas.toBlob(
++            (blob) => {
++              if (!blob) return reject('Compression failed');
++              if (blob.size / 1024 / 1024 > maxSizeMB && quality > 0.1) {
++                quality *= 0.8;
++                tryCompress();
++              } else {
++                resolve(new File([blob], file.name, { type: file.type }));
++              }
++            },
++            file.type,
++            quality,
++          );
++        };
++        tryCompress();
++      };
++      reader.onerror = (err) => reject(err);
++      reader.readAsDataURL(file);
++    });
++  }
++}
+diff --git a/src/app/admin/label-map.ts b/src/app/admin/label-map.ts
+new file mode 100644
+index 0000000..f5d7b7a
+--- /dev/null
++++ b/src/app/admin/label-map.ts
+@@ -0,0 +1,70 @@
++/**
++ * Dictionnaire de libellés « humains » pour l'éditeur d'administration.
++ * Permet d'afficher des noms clairs en français au client, plutôt que les
++ * clés techniques du JSON. Toute clé absente retombe sur un formatage
++ * automatique lisible.
++ */
++export const LABELS: Record<string, string> = {
++  // Sections principales
++  home: 'Accueil',
++  shop: 'Magasin',
++  workshop: 'Atelier',
++  horology: 'Horlogerie',
++  about: 'À propos',
++  contact: 'Contact',
++  menus: 'Navigation',
++  blocs: 'Images des blocs',
++  ordre: 'Champs des fiches montre',
++  fr: 'Français',
++  en: 'Anglais',
++
++  // Champs récurrents
++  title: 'Titre',
++  text: 'Texte',
++  textes: 'Paragraphes',
++  texte: 'Paragraphe',
++  bigimg: 'Image principale',
++  images: 'Images',
++  img: 'Images',
++  outils: 'Outils',
++  nom: 'Nom (dossier)',
++  polissage: 'Polissage',
++  movements: 'Mouvements',
++  complications: 'Complications',
++  revisions: 'Révisions',
++  polishing: 'Polissage',
++  piles: 'Piles',
++  bracelets: 'Bracelets',
++  placeholder: 'Texte indicatif',
++  model: 'Valeur saisie',
++  type: 'Type',
++  id: 'Identifiant',
++  disabled: 'Masqué',
++
++  // Textes d'interface
++  lastarrival: 'Dernières arrivées',
++  rightsreserved: 'Mention « droits réservés »',
++  legalmentions: 'Lien mentions légales',
++  discover_horology: "Titre — L'horlogerie",
++  horology_movements: 'Intro mouvements',
++  similar: 'Modèles similaires',
++  watches: 'Nos montres',
++  tri: 'Tri',
++  filtre: 'Filtre',
++  delete_filters: 'Supprimer les filtres',
++  reinit_filters: 'Réinitialiser les filtres',
++  search: 'Recherche',
++  revisions_txt: 'Texte révisions',
++  polishing_txt: 'Texte polissage',
++  piles_txt: 'Texte piles',
++  bracelets_txt: 'Texte bracelets',
++};
++
++export function humanize(key: string): string {
++  if (LABELS[key]) return LABELS[key];
++  // clé inconnue -> transformation lisible : camelCase / snake_case -> mots
++  return key
++    .replace(/_/g, ' ')
++    .replace(/([a-z])([A-Z])/g, '$1 $2')
++    .replace(/^\w/, (c) => c.toUpperCase());
++}
+diff --git a/src/app/app.html b/src/app/app.html
+index b16cfcd..8e0057b 100644
+--- a/src/app/app.html
++++ b/src/app/app.html
+@@ -69,4 +69,18 @@
+     <div class="line"></div>
+     <p class="rightsreserved">@{{ currentYear }} {{ app.data[app.lg].rightsreserved }}</p>
+   </div>
++
++  <!-- Administration -->
++  <app-admin-panel></app-admin-panel>
++  <button
++    class="admin-fab"
++    *ngIf="admin.isAdmin && !admin.panelOpen"
++    (click)="admin.togglePanel()"
++    title="Éditer le site"
++  >
++    ✎
++  </button>
++  <div class="admin-toast" *ngIf="admin.message" [class.error]="admin.messageError">
++    {{ admin.message }}
++  </div>
+ </div>
+diff --git a/src/app/app.routes.ts b/src/app/app.routes.ts
+index 588727e..2eebe4b 100644
+--- a/src/app/app.routes.ts
++++ b/src/app/app.routes.ts
+@@ -9,6 +9,7 @@ import { Watch } from './watch/watch';
+ import { Watches } from './watches/watches';
+ import { Workshop } from './workshop/workshop';
+ import { Addwatch } from './addwatch/addwatch';
++import { AdminLogin } from './admin/admin-login/admin-login';
+ 
+ export const routes: Routes = [
+   { path: '', redirectTo: 'home', pathMatch: 'full' },
+@@ -22,5 +23,6 @@ export const routes: Routes = [
+   { path: 'about', component: About },
+   { path: 'legal', component: Legal },
+   { path: 'addwatch', component: Addwatch },
++  { path: 'admin', component: AdminLogin },
+   { path: '**', redirectTo: 'home' },
+ ];
+diff --git a/src/app/app.scss b/src/app/app.scss
+index e69de29..ef4df86 100644
+--- a/src/app/app.scss
++++ b/src/app/app.scss
+@@ -0,0 +1,41 @@
++.admin-fab {
++  position: fixed;
++  right: 22px;
++  bottom: 22px;
++  z-index: 999;
++  width: 52px;
++  height: 52px;
++  border-radius: 50%;
++  font-size: 20px;
++  padding: 0;
++  display: flex;
++  align-items: center;
++  justify-content: center;
++  box-shadow: var(--shadow);
++}
++
++.admin-toast {
++  position: fixed;
++  left: 50%;
++  bottom: 26px;
++  transform: translateX(-50%);
++  z-index: 1002;
++  background: var(--surface);
++  color: var(--text);
++  border: 1px solid var(--border);
++  border-left: 3px solid #4caf7d;
++  border-radius: var(--radius-sm);
++  padding: 11px 18px;
++  font-size: 14px;
++  box-shadow: var(--shadow);
++  animation: toast-in 0.3s var(--ease);
++}
++.admin-toast.error {
++  border-left-color: #e0655a;
++}
++@keyframes toast-in {
++  from {
++    opacity: 0;
++    transform: translate(-50%, 12px);
++  }
++}
+diff --git a/src/app/app.ts b/src/app/app.ts
+index 2270458..3bd8201 100644
+--- a/src/app/app.ts
++++ b/src/app/app.ts
+@@ -4,10 +4,12 @@ import { FormsModule } from '@angular/forms';
+ import { CommonModule } from '@angular/common';
+ import { HttpClient } from '@angular/common/http';
+ import { Service } from './service';
++import { Admin } from './admin/admin.service';
++import { AdminPanel } from './admin/admin-panel/admin-panel';
+ 
+ @Component({
+   selector: 'app-root',
+-  imports: [FormsModule, CommonModule, RouterOutlet],
++  imports: [FormsModule, CommonModule, RouterOutlet, AdminPanel],
+   templateUrl: './app.html',
+   styleUrl: './app.scss',
+ })
+@@ -58,6 +60,7 @@ export class App implements OnInit {
+     private renderer: Renderer2,
+     private http: HttpClient,
+     public app: Service,
++    public admin: Admin,
+   ) {}
+ 
+   async ngOnInit() {
+-- 
+2.43.0
+
