@@ -1,37 +1,181 @@
 {
   "ordre": [
-    { "id": "brand", "fr": "Marque", "en": "Brand", "type": "text" },
-    { "id": "model", "fr": "Modèle", "en": "Model", "type": "text" },
-    { "id": "year", "fr": "Année", "en": "Year", "type": "text" },
-    { "id": "movementType", "fr": "Mouvement", "en": "Movement", "type": "text" },
-    { "id": "caliber", "fr": "Calibre", "en": "Caliber", "type": "text" },
-    { "id": "powerReserve", "fr": "Réserve de marche", "en": "Power reserve", "type": "text" },
-    { "id": "frequency", "fr": "Alternance/heure", "en": "VPH", "type": "text" },
-    { "id": "waterResistance", "fr": "Étanchéité", "en": "Water resistance", "type": "text" },
-    { "id": "case", "fr": "Boîtier", "en": "Case", "type": "text" },
-    { "id": "caseBack", "fr": "Fond", "en": "Caseback", "type": "text" },
-    { "id": "glass", "fr": "Glace", "en": "Crystal", "type": "text" },
-    { "id": "dial", "fr": "Cadran", "en": "Dial", "type": "text" },
-    { "id": "lugWidth", "fr": "Entre-corne", "en": "Lug width", "type": "text" },
-    { "id": "buckle", "fr": "Boucle", "en": "Clasp", "type": "text" },
-    { "id": "size", "fr": "Taille", "en": "Size", "type": "text" },
-    { "id": "crown", "fr": "Couronne", "en": "Crown", "type": "text" },
-    { "id": "bezel", "fr": "Lunette", "en": "Bezel", "type": "text" },
-    { "id": "indexes", "fr": "Index", "en": "Indices", "type": "text" },
-    { "id": "wristSize", "fr": "Tour de poignet", "en": "Wrist circumference", "type": "text" },
-    { "id": "buckleWidth", "fr": "Largeur de boucle", "en": "Clasp width", "type": "text" },
-    { "id": "created_at", "fr": "Date d'ajout", "en": "Adding date", "type": "text" }
+    {
+      "id": "brand",
+      "fr": "Marque",
+      "en": "Brand",
+      "type": "text"
+    },
+    {
+      "id": "model",
+      "fr": "Modèle",
+      "en": "Model",
+      "type": "text"
+    },
+    {
+      "id": "year",
+      "fr": "Année",
+      "en": "Year",
+      "type": "text"
+    },
+    {
+      "id": "movementType",
+      "fr": "Mouvement",
+      "en": "Movement",
+      "type": "text"
+    },
+    {
+      "id": "caliber",
+      "fr": "Calibre",
+      "en": "Caliber",
+      "type": "text"
+    },
+    {
+      "id": "powerReserve",
+      "fr": "Réserve de marche",
+      "en": "Power reserve",
+      "type": "text"
+    },
+    {
+      "id": "frequency",
+      "fr": "Alternance/heure",
+      "en": "VPH",
+      "type": "text"
+    },
+    {
+      "id": "waterResistance",
+      "fr": "Étanchéité",
+      "en": "Water resistance",
+      "type": "text"
+    },
+    {
+      "id": "case",
+      "fr": "Boîtier",
+      "en": "Case",
+      "type": "text"
+    },
+    {
+      "id": "caseBack",
+      "fr": "Fond",
+      "en": "Caseback",
+      "type": "text"
+    },
+    {
+      "id": "glass",
+      "fr": "Glace",
+      "en": "Crystal",
+      "type": "text"
+    },
+    {
+      "id": "dial",
+      "fr": "Cadran",
+      "en": "Dial",
+      "type": "text"
+    },
+    {
+      "id": "lugWidth",
+      "fr": "Entre-corne",
+      "en": "Lug width",
+      "type": "text"
+    },
+    {
+      "id": "buckle",
+      "fr": "Boucle",
+      "en": "Clasp",
+      "type": "text"
+    },
+    {
+      "id": "size",
+      "fr": "Taille",
+      "en": "Size",
+      "type": "text"
+    },
+    {
+      "id": "crown",
+      "fr": "Couronne",
+      "en": "Crown",
+      "type": "text"
+    },
+    {
+      "id": "bezel",
+      "fr": "Lunette",
+      "en": "Bezel",
+      "type": "text"
+    },
+    {
+      "id": "indexes",
+      "fr": "Index",
+      "en": "Indices",
+      "type": "text"
+    },
+    {
+      "id": "wristSize",
+      "fr": "Tour de poignet",
+      "en": "Wrist circumference",
+      "type": "text"
+    },
+    {
+      "id": "buckleWidth",
+      "fr": "Largeur de boucle",
+      "en": "Clasp width",
+      "type": "text"
+    },
+    {
+      "id": "created_at",
+      "fr": "Date d'ajout",
+      "en": "Adding date",
+      "type": "text"
+    }
   ],
   "menus": [
-    { "fr": "Accueil", "en": "Home", "id": "home", "disabled": true },
-    { "fr": "Montre", "en": "Watch", "id": "watch", "disabled": true },
-    { "fr": "Magasin", "en": "Shop", "id": "shop" },
-    { "fr": "Atelier", "en": "Workshop", "id": "workshop" },
-    { "fr": "Montres", "en": "Watches", "id": "watches" },
-    { "fr": "L'horlogerie", "en": "Horology", "id": "horology" },
-    { "fr": "Contact", "en": "Contact", "id": "contact" },
-    { "fr": "À propos", "en": "About Us", "id": "about" },
-    { "fr": "Mentions légales", "en": "Legal Notice", "id": "legal", "disabled": true }
+    {
+      "fr": "Accueil",
+      "en": "Home",
+      "id": "home",
+      "disabled": true
+    },
+    {
+      "fr": "Montre",
+      "en": "Watch",
+      "id": "watch",
+      "disabled": true
+    },
+    {
+      "fr": "Magasin",
+      "en": "Shop",
+      "id": "shop"
+    },
+    {
+      "fr": "Atelier",
+      "en": "Workshop",
+      "id": "workshop"
+    },
+    {
+      "fr": "Montres",
+      "en": "Watches",
+      "id": "watches"
+    },
+    {
+      "fr": "L'horlogerie",
+      "en": "Horology",
+      "id": "horology"
+    },
+    {
+      "fr": "Contact",
+      "en": "Contact",
+      "id": "contact"
+    },
+    {
+      "fr": "À propos",
+      "en": "About Us",
+      "id": "about"
+    },
+    {
+      "fr": "Mentions légales",
+      "en": "Legal Notice",
+      "id": "legal",
+      "disabled": true
+    }
   ],
   "fr": {
     "lastarrival": "Dernières arrivées",
@@ -51,14 +195,14 @@
     "filtre": "Filtre",
     "delete_filters": "Supprimer les filtres",
     "reinit_filters": "Réinitialiser les filtres",
-    "shop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "home": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "revisions_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "polishing_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "piles_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "bracelets_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "workshop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "horology": "L’horlogerie est la discipline technique dédiée à la conception, la fabrication et la régulation des instruments de mesure du temps. Elle combine mécanique de précision, micro- ingénierie et souvent électronique pour produire des garde-temps fiables et exacts. Les horlogers travaillent sur des mouvements composés de multiples composants : roues, pignons, balanciers, ressorts moteurs et échappements, dont l’agencement permet de convertir l’énergie emmagasinée en un rythme régulier mesurant les secondes, minutes et heures.",
+    "shop": "Poussez la porte de notre boutique au cœur d’Aix-en-Provence : un accueil chaleureux, des conseils personnalisés et une sélection de montres choisies avec exigence vous y attendent.",
+    "home": "Spécialiste de l’entretien, de la restauration et de la vente de montres, L’Horloger Aixois met un savoir-faire authentique au service de votre passion pour le temps.",
+    "revisions_txt": "Révision complète de votre garde-temps : démontage, nettoyage, remplacement des pièces d’usure, lubrification et remontage dans les règles de l’art, suivi d’un contrôle précis de la marche et de l’étanchéité.",
+    "polishing_txt": "Redonnez tout son éclat à votre montre. Polissage et satinage réalisés à la main, dans le respect des formes d’origine du boîtier et du bracelet, pour effacer rayures et micro-chocs.",
+    "piles_txt": "Changement de pile rapide et soigné, avec test de la réserve, contrôle du joint et vérification de l’étanchéité pour garantir la fiabilité de votre montre à quartz.",
+    "bracelets_txt": "Large choix de bracelets cuir, acier et caoutchouc, ajustés à votre poignet. Mise à la taille, remplacement des barrettes et pose soignée réalisés en boutique.",
+    "workshop": "Dans notre atelier, chaque montre est confiée à un horloger passionné : diagnostic, révision et réparation sont menés avec minutie, transparence et respect des standards des grandes maisons.",
+    "horology": "L’horlogerie est la science et la technique de la mesure du temps. Des premiers mouvements mécaniques aux complications les plus abouties, elle allie précision, ingéniosité et patience.",
     "search": "Rechercher..",
     "horology_2": "Les innovations horlogères impliquent également la miniaturisation, la résistance aux chocs et à la variation de température, et l’optimisation du rendement énergétique des mouvements. Au-delà de la mécanique, l’horlogerie moderne intègre souvent des complications telles que les calendriers perpétuels, chronographes, phases de lune ou tourbillons, qui illustrent la complexité et le savoir-faire technique nécessaire à leur conception.",
     "horology_3": "En résumé, l’horlogerie est un domaine où science, précision et ingéniosité mécanique se rencontrent pour transformer le temps, concept abstrait, en un instrument tangible et fonctionnel.",
@@ -82,14 +226,14 @@
     "filtre": "Filter",
     "delete_filters": "Delete filters",
     "reinit_filters": "Reset filters",
-    "shop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "home": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "revisions_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "polishing_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "piles_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "bracelets_txt": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "workshop": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "horology": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "shop": "Step into our boutique in the heart of Aix-en-Provence: a warm welcome, personalised advice and a carefully curated selection of watches await you.",
+    "home": "A specialist in watch servicing, restoration and sales, L’Horloger Aixois brings authentic craftsmanship to your passion for timekeeping.",
+    "revisions_txt": "A complete service of your timepiece: disassembly, cleaning, replacement of worn parts, lubrication and careful reassembly, followed by a precise check of accuracy and water resistance.",
+    "polishing_txt": "Restore your watch to its full shine. Hand polishing and satin-finishing that respects the original lines of the case and bracelet, removing scratches and minor marks.",
+    "piles_txt": "Quick and careful battery replacement, including reserve testing, gasket inspection and a water-resistance check to keep your quartz watch reliable.",
+    "bracelets_txt": "A wide selection of leather, steel and rubber straps, fitted to your wrist. Sizing, spring-bar replacement and careful fitting done in-store.",
+    "workshop": "In our workshop, every watch is entrusted to a passionate watchmaker: diagnosis, servicing and repair are carried out with care, transparency and respect for the highest standards.",
+    "horology": "Horology is the science and craft of measuring time. From the first mechanical movements to the most refined complications, it combines precision, ingenuity and patience.",
     "search": "Search.."
   },
   "home": {
@@ -121,10 +265,26 @@
     ]
   },
   "blocs": {
-    "revisions": ["0.png", "1.png", "2.png"],
-    "polishing": ["0.png", "1.png", "2.png"],
-    "piles": ["0.png", "1.png", "2.png"],
-    "bracelets": ["0.png", "1.png", "2.png"]
+    "revisions": [
+      "0.png",
+      "1.png",
+      "2.png"
+    ],
+    "polishing": [
+      "0.png",
+      "1.png",
+      "2.png"
+    ],
+    "piles": [
+      "0.png",
+      "1.png",
+      "2.png"
+    ],
+    "bracelets": [
+      "0.png",
+      "1.png",
+      "2.png"
+    ]
   },
   "horology": {
     "movements": [
@@ -194,27 +354,44 @@
     "outils": [
       {
         "nom": "reglage",
-        "img": ["0.png", "1.png", "2.png"],
-        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "img": [
+          "0.png",
+          "1.png",
+          "2.png"
+        ],
+        "fr": "Réglage de précision : nous ajustons la marche de votre montre sur plusieurs positions pour une exactitude optimale.",
+        "en": "Precision timing: we adjust your watch’s rate in several positions for optimal accuracy."
       },
       {
         "nom": "etancheite",
-        "img": ["0.png", "1.png", "2.png"],
-        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "img": [
+          "0.png",
+          "1.png",
+          "2.png"
+        ],
+        "fr": "Contrôle d’étanchéité : test sous pression pour vérifier la résistance à l’eau après chaque intervention.",
+        "en": "Water-resistance testing: pressure testing to verify sealing after every service."
       },
       {
         "nom": "machinealaver",
-        "img": ["0.png", "1.png", "2.png", "3.png", "4.png"],
-        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "img": [
+          "0.png",
+          "1.png",
+          "2.png",
+          "3.png",
+          "4.png"
+        ],
+        "fr": "Nettoyage ultrasons : chaque composant du mouvement est nettoyé en profondeur avant remontage.",
+        "en": "Ultrasonic cleaning: every movement component is thoroughly cleaned before reassembly."
       },
       {
         "nom": "simulateur",
-        "img": ["0.png", "1.png"],
-        "fr": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-        "en": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "img": [
+          "0.png",
+          "1.png"
+        ],
+        "fr": "Simulateur de marche : la montre est testée en conditions réelles pour valider sa fiabilité dans le temps.",
+        "en": "Running simulator: the watch is tested in real conditions to validate its long-term reliability."
       }
     ],
     "polissage": [
@@ -253,7 +430,15 @@
       "Découvrez également notre <b>sélection de montres de collection</b>, choisies pour leur caractère et leur intérêt unique, parfaites pour les amateurs et les collectionneurs.",
       "Venez vivre une expérience horlogère où <b>passion et savoir-faire</b> se rencontrent."
     ],
-    "images": ["0.png", "1.png", "2.png", "3.png", "4.png", "5.png", "6.png"]
+    "images": [
+      "0.png",
+      "1.png",
+      "2.png",
+      "3.png",
+      "4.png",
+      "5.png",
+      "6.png"
+    ]
   },
   "contact": [
     {
