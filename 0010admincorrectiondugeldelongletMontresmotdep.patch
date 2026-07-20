@@ -1,0 +1,466 @@
+From bf3e09cecd54ccf2d35672b97674d1a3bc9149e4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Mon, 20 Jul 2026 07:25:06 +0000
+Subject: [PATCH] admin: correction du gel de l'onglet Montres + mot de passe
+ modifiable + endpoint login securise
+
+- Fix du gel de l'onglet Montres : les getters watchFields/contentTabs
+  renvoyaient un nouveau tableau d'objets a chaque detection de changement ;
+  combines au *ngFor + ngModel, cela declenchait une boucle infinie. Ils
+  sont desormais memoises (reference stable) et les *ngFor ont un trackBy.
+- Nouvel onglet "Reglages" : changement du mot de passe admin depuis
+  l'interface (stocke cote navigateur, avec fallback sur le defaut).
+- Endpoints PHP fournis pour une vraie auth serveur : backend/login.php
+  (verifie password_hash, renvoie un jeton HMAC signe a duree limitee) et
+  backend/auth.php (a inclure en tete des ecritures). Documente dans ADMIN.md.
+
+Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01FdLcncGNUNUg7f4MuZZx7g
+---
+ ADMIN.md                                   | 50 ++++++++++++++++----
+ backend/auth.php                           | 40 ++++++++++++++++
+ backend/login.php                          | 51 ++++++++++++++++++++
+ src/app/admin/admin-panel/admin-panel.html | 36 +++++++++++++--
+ src/app/admin/admin-panel/admin-panel.scss | 21 +++++++++
+ src/app/admin/admin-panel/admin-panel.ts   | 54 ++++++++++++++++++++--
+ src/app/admin/admin.service.ts             | 27 +++++++++--
+ 7 files changed, 258 insertions(+), 21 deletions(-)
+ create mode 100644 backend/auth.php
+ create mode 100644 backend/login.php
+
+diff --git a/ADMIN.md b/ADMIN.md
+index 657b7d3..022665a 100644
+--- a/ADMIN.md
++++ b/ADMIN.md
+@@ -15,23 +15,22 @@ connecter, ce qu'on peut modifier, et ce qui reste à câbler côté serveur.
+ La session reste active tant que l'onglet du navigateur est ouvert
+ (`sessionStorage`). « Déconnexion » (en bas du panneau) la ferme.
+ 
+-## 2. Changer le mot de passe
++## 2. Mot de passe
+ 
+ > ⚠️ Par défaut : **`horloger2025`** — **à changer avant mise en ligne.**
+ 
+-Éditer la constante dans `src/app/admin/admin.service.ts` :
++Deux façons :
+ 
+-```ts
+-private readonly PASSWORD = 'horloger2025'; // ← mettre votre mot de passe ici
+-```
+-
+-puis reconstruire (`npm run build`) et redéployer.
++- **Depuis l'admin** (le plus simple) : onglet **Réglages** → « Changer le mot
++  de passe ». Le nouveau mot de passe est enregistré dans le navigateur
++  (`localStorage`) et remplace le défaut.
++- **Dans le code** : constante `DEFAULT_PASSWORD` de
++  `src/app/admin/admin.service.ts`, puis rebuild + redéploiement.
+ 
+ **Note de sécurité.** Cette authentification est **côté client** : elle
+ protège l'accès à l'interface, mais n'est pas une barrière serveur.
+-L'endpoint `sethorlogeraixois` est de toute façon déjà ouvert en écriture.
+-Pour un vrai contrôle d'accès, ajouter un endpoint d'authentification PHP
+-(retour d'un token) et l'appeler depuis `login()` — voir §5.
++Pour un vrai contrôle d'accès serveur, utiliser l'endpoint fourni
++`backend/login.php` (voir §7).
+ 
+ ## 3. Modifier le contenu du site
+ 
+@@ -98,3 +97,34 @@ src/app/admin/
+ ├── admin-panel/              # panneau à onglets + gestion des montres
+ └── admin-login/              # page /admin (connexion)
+ ```
++
++## 7. Connexion sécurisée côté serveur (optionnel)
++
++Pour dépasser l'authentification côté client, deux fichiers sont fournis
++dans `backend/` :
++
++- **`login.php`** : vérifie le mot de passe (haché via `password_hash`) et
++  renvoie un **jeton signé** (HMAC-SHA256) à durée limitée.
++- **`auth.php`** : à inclure en tête des endpoints d'écriture pour exiger un
++  jeton valide.
++
++**Mise en place**
++
++1. Générer le hash du mot de passe :
++   ```bash
++   php -r "echo password_hash('VOTRE_MOT_DE_PASSE', PASSWORD_DEFAULT), PHP_EOL;"
++   ```
++   Le coller dans `$PASSWORD_HASH` de `login.php`.
++2. Définir la même chaîne secrète `$SECRET` dans `login.php` et à l'appel de
++   `ha_require_auth()`.
++3. Protéger les écritures, par ex. en tête de `sethorlogeraixois` et de la
++   branche POST de `montreshorloger.php` :
++   ```php
++   require __DIR__ . '/auth.php';
++   ha_require_auth('LA_MEME_CHAINE_SECRETE');
++   ```
++
++**Côté front** : il reste à faire appeler `login.php` par `Admin.login()`
++(stocker le `token`) et à joindre l'en-tête `Authorization: Bearer <token>`
++aux requêtes d'écriture (`save`, `addWatch`, `updateWatch`, `deleteWatch`).
++Ce branchement n'est pas encore actif — demandez-le et je le câble.
+diff --git a/backend/auth.php b/backend/auth.php
+new file mode 100644
+index 0000000..fb5842c
+--- /dev/null
++++ b/backend/auth.php
+@@ -0,0 +1,40 @@
++<?php
++/**
++ * Vérification du jeton admin — à inclure EN TÊTE des endpoints d'écriture
++ * (sethorlogeraixois, et montreshorloger.php pour action=add/update/delete)
++ * afin de protéger les modifications.
++ *
++ * Usage :
++ *   require __DIR__ . '/auth.php';
++ *   ha_require_auth('LA_MEME_CHAINE_SECRETE_QUE_login.php');
++ *
++ * Le front envoie le jeton dans l'en-tête HTTP :  Authorization: Bearer <token>
++ * (ou dans un champ POST `token`).
++ */
++
++function ha_require_auth(string $secret): void {
++    // Récupère le jeton depuis l'en-tête Authorization ou un champ POST.
++    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
++    if (stripos($header, 'Bearer ') === 0) {
++        $token = trim(substr($header, 7));
++    } else {
++        $token = $_POST['token'] ?? '';
++    }
++
++    $fail = function (string $reason) {
++        http_response_code(401);
++        echo json_encode(['error' => 'unauthorized', 'reason' => $reason]);
++        exit;
++    };
++
++    $parts = explode('.', $token);
++    if (count($parts) !== 2) $fail('no_token');
++
++    [$payload, $sig] = $parts;
++    $expected = hash_hmac('sha256', $payload, $secret);
++    if (!hash_equals($expected, $sig)) $fail('bad_signature');
++
++    $json = base64_decode(strtr($payload, '-_', '+/'));
++    $data = json_decode($json, true);
++    if (!is_array($data) || ($data['exp'] ?? 0) < time()) $fail('expired');
++}
+diff --git a/backend/login.php b/backend/login.php
+new file mode 100644
+index 0000000..0623943
+--- /dev/null
++++ b/backend/login.php
+@@ -0,0 +1,51 @@
++<?php
++/**
++ * Connexion admin sécurisée — HorlogerAixois
++ *
++ * Vérifie le mot de passe (haché avec password_hash) et renvoie un jeton
++ * signé (HMAC-SHA256) à durée de vie limitée. Le front stocke ce jeton et
++ * l'envoie sur les endpoints d'écriture, qui le vérifient via auth.php.
++ *
++ * ── Mise en place ────────────────────────────────────────────────────────
++ * 1) Générer le hash du mot de passe (UNE fois, en local ou via SSH) :
++ *      php -r "echo password_hash('VOTRE_MOT_DE_PASSE', PASSWORD_DEFAULT), PHP_EOL;"
++ *    Coller le résultat dans $PASSWORD_HASH ci-dessous.
++ * 2) Mettre une longue chaîne aléatoire privée dans $SECRET (identique à
++ *    celle utilisée dans auth.php).
++ * 3) Déposer login.php et auth.php à côté des autres scripts PHP.
++ */
++
++header('Access-Control-Allow-Origin: *');
++header('Access-Control-Allow-Methods: POST, OPTIONS');
++header('Access-Control-Allow-Headers: Content-Type, Authorization');
++header('Content-Type: application/json; charset=utf-8');
++
++if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
++    http_response_code(200);
++    exit;
++}
++
++// ===================== À PERSONNALISER =====================
++$PASSWORD_HASH = '$2y$10$REMPLACEZ_CECI_PAR_LE_HASH_GENERE';
++$SECRET        = 'REMPLACEZ_PAR_UNE_LONGUE_CHAINE_ALEATOIRE_PRIVEE';
++$TOKEN_TTL     = 60 * 60 * 8; // durée de validité du jeton : 8 heures
++// ==========================================================
++
++$input = json_decode(file_get_contents('php://input'), true);
++if (!is_array($input)) $input = [];
++$password = $input['password'] ?? ($_POST['password'] ?? '');
++
++if (!is_string($password) || !password_verify($password, $PASSWORD_HASH)) {
++    usleep(300000); // léger délai anti-force-brute
++    http_response_code(401);
++    echo json_encode(['ok' => false, 'error' => 'invalid_credentials']);
++    exit;
++}
++
++// Jeton = base64(payload) + "." + HMAC(payload)
++$exp     = time() + $TOKEN_TTL;
++$payload = rtrim(strtr(base64_encode(json_encode(['exp' => $exp])), '+/', '-_'), '=');
++$sig     = hash_hmac('sha256', $payload, $SECRET);
++$token   = $payload . '.' . $sig;
++
++echo json_encode(['ok' => true, 'token' => $token, 'exp' => $exp]);
+diff --git a/src/app/admin/admin-panel/admin-panel.html b/src/app/admin/admin-panel/admin-panel.html
+index 573cd8d..2673204 100644
+--- a/src/app/admin/admin-panel/admin-panel.html
++++ b/src/app/admin/admin-panel/admin-panel.html
+@@ -11,7 +11,7 @@
+ 
+   <nav class="tabs">
+     <button
+-      *ngFor="let tab of contentTabs"
++      *ngFor="let tab of contentTabs; trackBy: trackByKey"
+       class="tab"
+       [class.active]="activeTab === tab.key"
+       (click)="selectTab(tab.key)"
+@@ -21,17 +21,43 @@
+     <button class="tab watches-tab" [class.active]="activeTab === 'watches'" (click)="selectTab('watches')">
+       Montres
+     </button>
++    <button class="tab" [class.active]="activeTab === 'settings'" (click)="selectTab('settings')">
++      Réglages
++    </button>
+   </nav>
+ 
+   <div class="panel-body">
+     <!-- Édition de contenu générique -->
+-    <ng-container *ngIf="activeTab !== 'watches' && data">
++    <ng-container *ngIf="activeTab !== 'watches' && activeTab !== 'settings' && data">
+       <p class="section-hint">
+         Modifiez les textes ci-dessous puis cliquez sur <strong>Enregistrer</strong> en bas.
+       </p>
+       <admin-node [node]="data" [key]="activeTab" [depth]="0"></admin-node>
+     </ng-container>
+ 
++    <!-- Réglages -->
++    <ng-container *ngIf="activeTab === 'settings'">
++      <div class="settings">
++        <h3>Changer le mot de passe</h3>
++        <p class="section-hint">
++          Le mot de passe d'accès à l'administration est enregistré sur cet appareil.
++        </p>
++        <label class="node field">
++          <span class="node-label">Mot de passe actuel</span>
++          <input type="password" [(ngModel)]="pwCurrent" name="pwCurrent" autocomplete="current-password" />
++        </label>
++        <label class="node field">
++          <span class="node-label">Nouveau mot de passe</span>
++          <input type="password" [(ngModel)]="pwNew" name="pwNew" autocomplete="new-password" />
++        </label>
++        <label class="node field">
++          <span class="node-label">Confirmer le nouveau mot de passe</span>
++          <input type="password" [(ngModel)]="pwConfirm" name="pwConfirm" autocomplete="new-password" />
++        </label>
++        <button (click)="submitPassword()">Mettre à jour le mot de passe</button>
++      </div>
++    </ng-container>
++
+     <!-- Gestion des montres -->
+     <ng-container *ngIf="activeTab === 'watches'">
+       <div class="watches-manager">
+@@ -40,9 +66,9 @@
+           <h3>{{ editingWatch ? 'Modifier la montre' : 'Ajouter une montre' }}</h3>
+ 
+           <div class="form-grid">
+-            <label class="node field" *ngFor="let f of watchFields">
++            <label class="node field" *ngFor="let f of watchFields; trackBy: trackByFieldId">
+               <span class="node-label">{{ f.label }}</span>
+-              <input type="text" [(ngModel)]="watchForm[f.id]" />
++              <input type="text" [(ngModel)]="watchForm[f.id]" [name]="'wf_' + f.id" />
+             </label>
+           </div>
+ 
+@@ -71,7 +97,7 @@
+         <!-- Liste des montres existantes -->
+         <div class="watch-list">
+           <h3>Montres en ligne <span class="count">({{ montres.length }})</span></h3>
+-          <div class="watch-row" *ngFor="let w of montres">
++          <div class="watch-row" *ngFor="let w of montres; trackBy: trackByWatch">
+             <div class="thumb">
+               <img *ngIf="watchImageUrl(w)" [src]="watchImageUrl(w)" alt="montre" />
+               <span *ngIf="!watchImageUrl(w)" class="no-img">—</span>
+diff --git a/src/app/admin/admin-panel/admin-panel.scss b/src/app/admin/admin-panel/admin-panel.scss
+index e10a27f..54ad5e8 100644
+--- a/src/app/admin/admin-panel/admin-panel.scss
++++ b/src/app/admin/admin-panel/admin-panel.scss
+@@ -109,6 +109,27 @@
+   margin-bottom: 12px;
+ }
+ 
++.settings {
++  h3 {
++    font-family: var(--font-title);
++    font-size: 17px;
++    margin-bottom: 8px;
++    letter-spacing: 0.03em;
++  }
++  .node.field {
++    display: flex;
++    flex-direction: column;
++    gap: 5px;
++    margin: 12px 0;
++  }
++  .node.field input {
++    width: 100%;
++  }
++  button {
++    margin-top: 8px;
++  }
++}
++
+ /* ---- Montres ---- */
+ .watch-form h3,
+ .watch-list h3 {
+diff --git a/src/app/admin/admin-panel/admin-panel.ts b/src/app/admin/admin-panel/admin-panel.ts
+index 8199f3c..5d61233 100644
+--- a/src/app/admin/admin-panel/admin-panel.ts
++++ b/src/app/admin/admin-panel/admin-panel.ts
+@@ -48,17 +48,33 @@ export class AdminPanel {
+     return this.admin.app.data;
+   }
+ 
++  private _tabsCache: Tab[] | null = null;
++  private _tabsKey = '';
+   get contentTabs(): Tab[] {
+     if (!this.data) return [];
+-    return this.contentOrder
++    const key = this.contentOrder.filter((k) => this.data[k] !== undefined).join(',');
++    if (this._tabsCache && this._tabsKey === key) return this._tabsCache;
++    this._tabsKey = key;
++    this._tabsCache = this.contentOrder
+       .filter((k) => this.data[k] !== undefined)
+       .map((k) => ({ key: k, label: humanize(k) }));
++    return this._tabsCache;
+   }
+ 
+   get montres(): any[] {
+     return this.admin.app.montres ?? [];
+   }
+ 
++  trackByKey(_i: number, t: Tab) {
++    return t.key;
++  }
++  trackByFieldId(_i: number, f: { id: string }) {
++    return f.id;
++  }
++  trackByWatch(_i: number, w: any) {
++    return w?.id;
++  }
++
+   selectTab(key: string) {
+     this.activeTab = key;
+   }
+@@ -69,16 +85,28 @@ export class AdminPanel {
+ 
+   // ---- Gestion des montres ---------------------------------------------
+ 
++  private _wfCache: { id: string; label: string }[] | null = null;
++  private _wfKey = '';
++  /**
++   * Champs du formulaire montre. MÉMOÏSÉ : renvoie la même référence de
++   * tableau tant que la langue et l'ordre ne changent pas. Indispensable —
++   * un nouveau tableau à chaque détection de changement, combiné au
++   * *ngFor + ngModel, provoquait une boucle infinie (gel de l'onglet).
++   */
+   get watchFields(): { id: string; label: string }[] {
+     const ordre = this.data?.ordre ?? [];
++    const lg = this.admin.app.lg;
++    const key = lg + '|' + ordre.map((o: any) => o.id).join(',');
++    if (this._wfCache && this._wfKey === key) return this._wfCache;
+     const base = [
+       { id: 'reference', fr: 'Référence', en: 'Reference' },
+       { id: 'price', fr: 'Prix', en: 'Price' },
+     ];
+-    const lg = this.admin.app.lg;
+-    return [...base, ...ordre]
++    this._wfKey = key;
++    this._wfCache = [...base, ...ordre]
+       .filter((f: any) => f.id !== 'created_at')
+       .map((f: any) => ({ id: f.id, label: f[lg] ?? f.fr ?? f.id }));
++    return this._wfCache;
+   }
+ 
+   startAddWatch() {
+@@ -146,4 +174,24 @@ export class AdminPanel {
+     if (!confirm(`Supprimer la montre « ${watch?.otherData?.reference ?? watch.id} » ?`)) return;
+     await this.admin.deleteWatch(watch.id);
+   }
++
++  // ---- Réglages (mot de passe) -----------------------------------------
++
++  pwCurrent = '';
++  pwNew = '';
++  pwConfirm = '';
++
++  submitPassword() {
++    if (this.pwNew !== this.pwConfirm) {
++      this.admin.flash('La confirmation ne correspond pas.', true);
++      return;
++    }
++    const res = this.admin.changePassword(this.pwCurrent, this.pwNew);
++    this.admin.flash(res.msg, !res.ok);
++    if (res.ok) {
++      this.pwCurrent = '';
++      this.pwNew = '';
++      this.pwConfirm = '';
++    }
++  }
+ }
+diff --git a/src/app/admin/admin.service.ts b/src/app/admin/admin.service.ts
+index b4903a0..ce5fb7e 100644
+--- a/src/app/admin/admin.service.ts
++++ b/src/app/admin/admin.service.ts
+@@ -27,8 +27,13 @@ export class Admin {
+   message = '';
+   messageError = false;
+ 
+-  /** ⚠️ À PERSONNALISER par le client. Mot de passe d'accès à l'admin. */
+-  private readonly PASSWORD = 'horloger2025';
++  /** Mot de passe par défaut (fallback). Peut être changé depuis l'admin. */
++  private readonly DEFAULT_PASSWORD = 'horloger2025';
++
++  /** Mot de passe effectif : celui défini dans l'admin sinon le défaut. */
++  private effectivePassword(): string {
++    return localStorage.getItem('ha_admin_pw') || this.DEFAULT_PASSWORD;
++  }
+ 
+   link = 'http' + (isDevMode() ? '' : 's') + '://chiyanh.cluster031.hosting.ovh.net/';
+ 
+@@ -49,7 +54,7 @@ export class Admin {
+   }
+ 
+   login(password: string): boolean {
+-    if (password === this.PASSWORD) {
++    if (password === this.effectivePassword()) {
+       this.isAdmin = true;
+       sessionStorage.setItem('ha_admin', '1');
+       return true;
+@@ -57,6 +62,22 @@ export class Admin {
+     return false;
+   }
+ 
++  /**
++   * Change le mot de passe d'accès à l'admin (stocké côté navigateur).
++   * Note : sécurité côté client uniquement — pour un vrai contrôle, brancher
++   * l'endpoint `backend/login.php` (voir ADMIN.md).
++   */
++  changePassword(current: string, next: string): { ok: boolean; msg: string } {
++    if (current !== this.effectivePassword()) {
++      return { ok: false, msg: 'Mot de passe actuel incorrect.' };
++    }
++    if (!next || next.length < 4) {
++      return { ok: false, msg: 'Le nouveau mot de passe doit faire au moins 4 caractères.' };
++    }
++    localStorage.setItem('ha_admin_pw', next);
++    return { ok: true, msg: 'Mot de passe modifié ✓' };
++  }
++
+   logout() {
+     this.isAdmin = false;
+     this.panelOpen = false;
+-- 
+2.43.0
+
